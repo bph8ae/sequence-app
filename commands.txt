@@ -1,6 +1,0 @@
-
-//Start the React Sequence app and automatically open the "start_url" per the manifest.json file
-npm run start
-
-//Builds an optimized production build inside the build folder
-npm run-script build
