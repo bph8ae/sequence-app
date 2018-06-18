@@ -80,18 +80,18 @@ diagram.linkTemplate =
 			{ toArrow: "Standard", fill: "black" }
 		),
 		$(go.Shape, //Second Arrow
-			{ fromArrow: "Backward", fill: "white", stroke:"white" }/*,
-			new go.Binding("fromArrow", "type", function(type) {
+			{ fromArrow: "Backward", fill: "white", stroke:"white", scale: 2 },
+			new go.Binding("fill", "type", function(type) {
 				if (type === "utility") {
 					console.log("Backwards Arrow Needed");
-					return "Backward";
+					return "black";
 				}
 				else {
 					console.log("No Arrow Needed");
-					return "none";
+					return "white";
 				}
 			})
-		*/)
+		)
 	);
 
 // the Model holds only the essential information describing the diagram
