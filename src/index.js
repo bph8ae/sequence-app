@@ -12,9 +12,6 @@ var $ = go.GraphObject.make;
 
 var diagram = new go.Diagram("myDiagramDiv");
 	diagram.model = new go.GraphLinksModel(
-	  [{ key: "Hello" },   // two node data, in an Array
-	   { key: "World!" }],
-	  [{ from: "Hello", to: "World!"}]  // one link data, in an Array
 	);
 
 // Node template describes how each Node should be constructed
@@ -23,7 +20,7 @@ diagram.nodeTemplate =
 		new go.Binding("location", "loc", go.Point.parse),
 		$(go.Shape, "Square",  // use this kind of figure for the Shape
 		// bind Shape.fill to Node.data.color
-			{ 
+			{
 				fill: "gold",
 				width: 100,
 				height: 100 }
@@ -36,7 +33,7 @@ diagram.nodeTemplate =
 				new go.Binding("text", "key", (key) => "key:"+key)
 			),
 			$(go.TextBlock,
-				{ 
+				{
 					margin: 3,
 					font: "bold 12pt sans-serif"
 				},  // some room around the text
@@ -60,7 +57,7 @@ diagram.nodeTemplate =
 					if(doesNodeHaveChildren(key)) {
 						if (isNodeExpanded(key)) {
 							return "–";
-						} 
+						}
 						else {
 							return "+";
 						}
@@ -76,19 +73,25 @@ diagram.nodeTemplate =
 diagram.linkTemplate =
 	$(go.Link,
 		{ routing: go.Link.Orthogonal},
-		$(go.Shape,
-			/*new go.Binding("alignment","type", function(type) {
-					console.log(type);
-					return type === "utility" ? go.Spot.Right : go.Spot.Bottom; 
-			}),*/
-			new go.Binding("stroke", "color"),  // shape.stroke = data.color
-			new go.Binding("strokeWidth", "thick") // shape.strokeWidth = data.thick
+		$(go.Shape, //Link
+			{fill: "black"}
 		),
-		$(go.Shape,
-			{ toArrow: "Standard", fill: "black" },
-			new go.Binding("stroke", "color"),  // shape.stroke = data.color
-			new go.Binding("strokeWidth", "thick") // shape.strokeWidth = data.thick
-		)
+		$(go.Shape, //First Arrow
+			{ toArrow: "Standard", fill: "black" }
+		),
+		$(go.Shape, //Second Arrow
+			{ fromArrow: "Backward", fill: "white", stroke:"white" }/*,
+			new go.Binding("fromArrow", "type", function(type) {
+				if (type === "utility") {
+					console.log("Backwards Arrow Needed");
+					return "Backward";
+				}
+				else {
+					console.log("No Arrow Needed");
+					return "none";
+				}
+			})
+		*/)
 	);
 
 // the Model holds only the essential information describing the diagram
