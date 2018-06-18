@@ -77,18 +77,16 @@ diagram.linkTemplate =
 			{fill: "black"}
 		),
 		$(go.Shape, //First Arrow
-			{ toArrow: "Standard", fill: "black" }
+			{ toArrow: "Standard", fill: "black", stroke:"black" }
 		),
 		$(go.Shape, //Second Arrow
-			{ fromArrow: "Backward", fill: "white", stroke:"white", scale: 2 },
-			new go.Binding("fill", "type", function(type) {
+			{ fromArrow: "Backward", fill: "black", stroke:"black" },
+			new go.Binding("fromArrow", "type", function(type) {
 				if (type === "utility") {
-					console.log("Backwards Arrow Needed");
-					return "black";
+					return "Backward";
 				}
 				else {
-					console.log("No Arrow Needed");
-					return "white";
+					return "line";
 				}
 			})
 		)
