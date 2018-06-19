@@ -7,13 +7,13 @@ class FileService {
 	}
 
 	handleFileSelect(input) {
-		this.file = input.target.files[0];
+		const file = input.target.files[0];
     const reader = new FileReader();
 
     reader.onload = (event) => {
-        const file = event.target.result;
-				console.log(file);
-        const allLines = file.split(/\r\n|\n/);
+        this.file = event.target.result;
+				console.log(this.file);
+        const allLines = this.file.split(/\r\n|\n/);
         //Reading line by line
         allLines.forEach((line) => {
             console.log(line);
@@ -24,7 +24,7 @@ class FileService {
         alert(event.target.error.name);
     };
 
-    reader.readAsText(this.file);
+    reader.readAsText(file);
 	}
 
 }
