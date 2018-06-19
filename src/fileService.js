@@ -6,18 +6,25 @@ class FileService {
 		this.file;
 	}
 
-	handleFileSelect(event) {
-		if(event.target.files.length != 0) {
-			this.file = event.target.files[0];
-    		console.log(this.file);
-    		console.log(typeof(this.file));
-    		var data = (typeof this.file == "object" ? this.file : JSON.parse(this.file));
-    		console.log(typeof(data));
-    		console.log(data);
-		}
-		else {
-			alert("No file chosen");
-		}
+	handleFileSelect(input) {
+		this.file = input.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (event) => {
+        const file = event.target.result;
+				console.log(file);
+        const allLines = file.split(/\r\n|\n/);
+        //Reading line by line
+        allLines.forEach((line) => {
+            console.log(line);
+        });
+    };
+
+    reader.onerror = (event) => {
+        alert(event.target.error.name);
+    };
+
+    reader.readAsText(this.file);
 	}
 
 }
