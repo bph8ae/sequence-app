@@ -2,9 +2,9 @@ import * as go from 'gojs';
 
 import './index.css';
 import { expandNode, retractNode, toggleNode, isNodeExpanded, doesNodeHaveChildren } from "./functions";
+import { fileService } from "./fileService";
 import { blockService } from "./blockService";
 import { linkService } from "./linkService";
-import { fileService } from "./fileService";
 
 document.getElementById('fileDiv').addEventListener('change', fileService.handleFileSelect, false);
 
@@ -98,7 +98,17 @@ diagram.initialContentAlignment = go.Spot.Center;
 // enable Ctrl-Z to undo and Ctrl-Y to redo
 diagram.undoManager.isEnabled = true;
 diagram.animationManager.isEnabled = false;
-renderDiagram();
+
+// document.getElementById('renderButton').addEventListener('click', function() {
+// 	console.log('in init');
+// 	console.log(fileService.data);
+// 	if (fileService.data !== null) {
+// 		console.log('in funct');
+// 		blockService.setBlocks();
+// 		renderDiagram();
+// 		console.log('post render');
+// 	}
+// });
 
 export function renderDiagram() {
 	console.log("\n====================REDRAWING DIAGRAM====================\n\n")

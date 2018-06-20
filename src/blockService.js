@@ -1,24 +1,47 @@
 import { linkService } from "./linkService";
+import { fileService } from "./fileService";
 import "./block.js";
 
 //Block Data Functionality
 class BlockService {
 
     constructor() {
-        this.blocks = [
-            {key:1, loc:"0 0", parent:0, csect:"E", name:"test block", linesOfCode:"1-100", description:"test", color: "brown"},
-            {key:2, loc:"150 0", parent:1, csect:"E", name:"test", linesOfCode:"101-200", description:"test"},
-            {key:3, loc:"0 150", parent:0, csect:"E", name:"test", linesOfCode:"201-300", description:"test"},
-            {key:4, loc:"150 150", parent:3, csect:"E", name:"test", linesOfCode:"301-400", description:"test"},
-            {key:5, loc:"150 300", parent:3, csect:"E", name:"test", linesOfCode:"401-500", description:"test"},
-            {key:6, loc:"300 0", parent:2, csect:"E", name:"test", linesOfCode:"501-600", description:"test"},
-            {key:7, loc:"300 150", parent:4, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-            {key:8, loc:"150 450", parent:3, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-            {key:9, loc:"300 300", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-            {key:10, loc:"300 450", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"}
-        ];
-        //this.visibleBlocks = this.blocks.filter(b => b.depth === 0);
-        this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
+        // this.blocks = fileService.file;
+        //     this.blocks = [
+        //     {key:1, loc:"0 0", parent:0, csect:"E", name:"test block", linesOfCode:"1-100", description:"test", color: "brown"},
+        //     {key:2, loc:"150 0", parent:1, csect:"E", name:"test", linesOfCode:"101-200", description:"test"},
+        //     {key:3, loc:"0 150", parent:0, csect:"E", name:"test", linesOfCode:"201-300", description:"test"},
+        //     {key:4, loc:"150 150", parent:3, csect:"E", name:"test", linesOfCode:"301-400", description:"test"},
+        //     {key:5, loc:"150 300", parent:3, csect:"E", name:"test", linesOfCode:"401-500", description:"test"},
+        //     {key:6, loc:"300 0", parent:2, csect:"E", name:"test", linesOfCode:"501-600", description:"test"},
+        //     {key:7, loc:"300 150", parent:4, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
+        //     {key:8, loc:"150 450", parent:3, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
+        //     {key:9, loc:"300 300", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
+        //     {key:10, loc:"300 450", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"}
+        // ];
+        this.blocks;
+        this.visibleBlocks;
+    }
+
+    setBlocks(data) {
+      // data = data.substr(1,data.length-6);
+      // preserve newlines, etc - use valid JSON
+      data = data.replace(/\\n/g, "\\n")
+               .replace(/\\'/g, "\\'")
+               .replace(/\\"/g, '\\"')
+               .replace(/\\&/g, "\\&")
+               .replace(/\\r/g, "\\r")
+               .replace(/\\t/g, "\\t")
+               .replace(/\\b/g, "\\b")
+               .replace(/\\f/g, "\\f");
+// remove non-printable and other non-valid JSON chars
+      data = data.replace(/[\u0000-\u0019]+/g,"");
+      // console.log(data);
+      this.blocks = JSON.parse(data);
+      console.log(typeof(this.blocks));
+      // this.visibleBlocks = this.blocks.filter(b => b.depth === 0);
+      this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
+      console.log(this.blocks);
     }
 
     getBlocks() {
@@ -160,6 +183,8 @@ class BlockService {
             });
         });
     }
+
+
 }
 
 export const blockService = new BlockService();

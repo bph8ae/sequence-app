@@ -30,7 +30,7 @@
     "parent":0,
     "prior":1,
     "loc": "0 150",
-    "destination": ,
+    "destination": "",
     "utilities":[4, 5],
     "csect": "E",
     "name": "test",
