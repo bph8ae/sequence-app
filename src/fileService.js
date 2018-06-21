@@ -14,13 +14,6 @@ class FileService {
 		var data = [];
     reader.onload = (event) => {
         data = event.target.result;
-        // const allLines = data.split(/\r\n|\n/);
-        //Reading line by line
-        // allLines.forEach((line) => {
-				// 	// data.push(line);
-				// 	// console.log(line);
-				// });
-				// setData(this.data);
 				document.getElementById('renderButton').addEventListener('click', function() {
 					if (data !== null) {
 						blockService.setBlocks(data);
@@ -35,10 +28,6 @@ class FileService {
     };
 
     reader.readAsText(file);
-
-		// function setData(data) {
-		// 	this.data = data;
-		// }
 
 	}
 }

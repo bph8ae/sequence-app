@@ -6,25 +6,11 @@ import "./block.js";
 class BlockService {
 
     constructor() {
-        // this.blocks = fileService.file;
-        //     this.blocks = [
-        //     {key:1, loc:"0 0", parent:0, csect:"E", name:"test block", linesOfCode:"1-100", description:"test", color: "brown"},
-        //     {key:2, loc:"150 0", parent:1, csect:"E", name:"test", linesOfCode:"101-200", description:"test"},
-        //     {key:3, loc:"0 150", parent:0, csect:"E", name:"test", linesOfCode:"201-300", description:"test"},
-        //     {key:4, loc:"150 150", parent:3, csect:"E", name:"test", linesOfCode:"301-400", description:"test"},
-        //     {key:5, loc:"150 300", parent:3, csect:"E", name:"test", linesOfCode:"401-500", description:"test"},
-        //     {key:6, loc:"300 0", parent:2, csect:"E", name:"test", linesOfCode:"501-600", description:"test"},
-        //     {key:7, loc:"300 150", parent:4, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-        //     {key:8, loc:"150 450", parent:3, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-        //     {key:9, loc:"300 300", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"},
-        //     {key:10, loc:"300 450", parent:5, csect:"E", name:"Test", linesOfCode:"501-600", description:"test"}
-        // ];
         this.blocks;
         this.visibleBlocks;
     }
 
     setBlocks(data) {
-      // data = data.substr(1,data.length-6);
       // preserve newlines, etc - use valid JSON
       data = data.replace(/\\n/g, "\\n")
                .replace(/\\'/g, "\\'")
@@ -34,12 +20,18 @@ class BlockService {
                .replace(/\\t/g, "\\t")
                .replace(/\\b/g, "\\b")
                .replace(/\\f/g, "\\f");
-// remove non-printable and other non-valid JSON chars
+      // remove non-printable and other non-valid JSON chars
       data = data.replace(/[\u0000-\u0019]+/g,"");
       // console.log(data);
       this.blocks = JSON.parse(data);
       // this.visibleBlocks = this.blocks.filter(b => b.depth === 0);
       this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
+    }
+
+    calcLocation(distance, x, y) {
+      x = distance * x;
+      y = distance * y;
+      return x.toString() + " " + y.toString();
     }
 
     getBlocks() {
@@ -90,18 +82,13 @@ class BlockService {
     }
 
     isBackbone(key) {
-       // return (this.getBlock(key).prior !== this.getBlock(key).parent);
-       if (this.hasDestination(key)){
+       if (this.hasDestination(key)) {
          const destKey = this.getBlock(key).destination;
-         if (this.getBlock(destKey).parent === 0) {
+         if ((this.getBlock(destKey).parent === 0) && (this.getBlock(destKey).parent !== this.getBlock(destKey).prior)) {
            return true;
          } else {
            return false;
          }
-         // console.log('Dest: '+destKey);
-         // console.log(this.getBlock(destKey).prior);
-         // console.log(this.getBlock(destKey).parent);
-         // console.log(this.getBlock(destKey).prior !== this.getBlock(destKey).parent);
      }
     }
 
@@ -183,30 +170,11 @@ class BlockService {
                 if (this.isBackbone(b.key)) {
                     destinationLink.isBackbone = true;
                 }
-                // else {
-                //     destinationLink.root = false;
-                // }
                 linkService.addLink(destinationLink);
-                // if(this.getVisibleBlock(b.key) !== null) {
-                //     linkService.addVisibleLink(destinationLink);
-                // }
             }
-            // b.Utilities.forEach(u => {
-            //     var utilityLink = {from:b.key, to:u.key, type:"utility", isBackbone:false};
-            //     linkService.addLink(utilityLink);
-            //     // if(this.getVisibleBlock(u.key) !== null) {
-            //     //     linkService.addVisibleLink(utilityLink);
-            //     // }
-            // });
             if (this.hasUtilities(b.key)) {
               for (var i = 0; i < b.utilities.length; i++) {
                 var utilityLink = {from:b.key, to:b.utilities[i], type:"utility", isBackbone:false};
-                if (this.isBackbone(b.key)) {
-                    utilityLink.isBackbone = true;
-                }
-                // else {
-                //     destinationLink.root = false;
-                // }
                 linkService.addLink(utilityLink);
               }
             }
