@@ -1,5 +1,6 @@
 import { renderDiagram as render } from "./index";
 import { blockService } from "./blockService";
+import { linkService } from "./linkService";
 
 class FileService {
 
@@ -13,7 +14,6 @@ class FileService {
 		var data = [];
     reader.onload = (event) => {
         data = event.target.result;
-				console.log(data);
         // const allLines = data.split(/\r\n|\n/);
         //Reading line by line
         // allLines.forEach((line) => {
@@ -22,12 +22,11 @@ class FileService {
 				// });
 				// setData(this.data);
 				document.getElementById('renderButton').addEventListener('click', function() {
-				console.log('in init');
 					if (data !== null) {
-						console.log('in funct');
 						blockService.setBlocks(data);
+						linkService.createLinks();
 						render();
-						console.log('post render');
+						console.log('Post Render');
 					}
 				});
     }

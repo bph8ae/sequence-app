@@ -38,10 +38,8 @@ class BlockService {
       data = data.replace(/[\u0000-\u0019]+/g,"");
       // console.log(data);
       this.blocks = JSON.parse(data);
-      console.log(typeof(this.blocks));
       // this.visibleBlocks = this.blocks.filter(b => b.depth === 0);
       this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
-      console.log(this.blocks);
     }
 
     getBlocks() {
@@ -92,11 +90,30 @@ class BlockService {
     }
 
     isBackbone(key) {
-       return this.getBlock(key).depth === 0 ? true : false;
+       // return (this.getBlock(key).prior !== this.getBlock(key).parent);
+       if (this.hasDestination(key)){
+         const destKey = this.getBlock(key).destination;
+         if (this.getBlock(destKey).parent === 0) {
+           return true;
+         } else {
+           return false;
+         }
+         // console.log('Dest: '+destKey);
+         // console.log(this.getBlock(destKey).prior);
+         // console.log(this.getBlock(destKey).parent);
+         // console.log(this.getBlock(destKey).prior !== this.getBlock(destKey).parent);
+     }
     }
 
     hasDestination(key) {
-        if (this.getBlock(key).destination !== null || this.getBlock(key).destination !== "") {
+        if (this.getBlock(key).destination !== null && this.getBlock(key).destination !== "") {
+            return true;
+        }
+        return false;
+    }
+
+    hasUtilities(key) {
+        if (this.getBlock(key).utilities !== [] && this.getBlock(key).utilities !== null) {
             return true;
         }
         return false;
@@ -162,25 +179,37 @@ class BlockService {
     parseBlocksToCreateLinks() {
         this.blocks.forEach(b => {
             if (this.hasDestination(b.key)) {
-                var destinationLink = {from:b.key, to:b.destination, type:"destination"};
-                if (this.isRootLevel(b.key)) {
-                    destinationLink.root = true;
+                var destinationLink = {from:b.key, to:b.destination, type:"destination", isBackbone:false};
+                if (this.isBackbone(b.key)) {
+                    destinationLink.isBackbone = true;
                 }
-                else {
-                    destinationLink.root = false;
-                }
+                // else {
+                //     destinationLink.root = false;
+                // }
                 linkService.addLink(destinationLink);
-                if(this.getVisibleBlock(b.key) !== null) {
-                    linkService.addVisibleLink(destinationLink);
-                }
+                // if(this.getVisibleBlock(b.key) !== null) {
+                //     linkService.addVisibleLink(destinationLink);
+                // }
             }
-            b.Utilities.forEach(u => {
-                var utilityLink = {from:b.key, to:u.key, type:"utility", root:false};
-                linkService.addLink(utilityLink);
-                if(this.getVisibleBlock(u.key) !== null) {
-                    linkService.addVisibleLink(utilityLink);
+            // b.Utilities.forEach(u => {
+            //     var utilityLink = {from:b.key, to:u.key, type:"utility", isBackbone:false};
+            //     linkService.addLink(utilityLink);
+            //     // if(this.getVisibleBlock(u.key) !== null) {
+            //     //     linkService.addVisibleLink(utilityLink);
+            //     // }
+            // });
+            if (this.hasUtilities(b.key)) {
+              for (var i = 0; i < b.utilities.length; i++) {
+                var utilityLink = {from:b.key, to:b.utilities[i], type:"utility", isBackbone:false};
+                if (this.isBackbone(b.key)) {
+                    utilityLink.isBackbone = true;
                 }
-            });
+                // else {
+                //     destinationLink.root = false;
+                // }
+                linkService.addLink(utilityLink);
+              }
+            }
         });
     }
 

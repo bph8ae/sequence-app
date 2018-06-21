@@ -4,18 +4,25 @@ import { blockService } from "./blockService";
 class LinkService {
 
     constructor() {
-        this.links = [
-            {from:1, to:2, type:"utility", isBackbone:false},
-            {from:1, to:3, type:"destination", isBackbone:true},
-            {from:3, to:4, type:"utility", isBackbone:false},
-            {from:3, to:5, type:"utility", isBackbone:false},
-            {from:2, to:6, type:"utility", isBackbone:false},
-            {from:4, to:7, type:"utility", isBackbone:false},
-            {from:5, to:8, type:"destination", isBackbone:false},
-            {from:5, to:9, type:"utility", isBackbone:false},
-            {from:9, to:10, type:"destination", isBackbone:false}
-        ];
-        this.visibleLinks = this.links.filter(l =>l.isBackbone);
+        // this.links = [
+        //     {from:1, to:2, type:"utility", isBackbone:false},
+        //     {from:1, to:3, type:"destination", isBackbone:true},
+        //     {from:3, to:4, type:"utility", isBackbone:false},
+        //     {from:3, to:5, type:"utility", isBackbone:false},
+        //     {from:2, to:6, type:"utility", isBackbone:false},
+        //     {from:4, to:7, type:"utility", isBackbone:false},
+        //     {from:5, to:8, type:"destination", isBackbone:false},
+        //     {from:5, to:9, type:"utility", isBackbone:false},
+        //     {from:9, to:10, type:"destination", isBackbone:false}
+        // ];
+        this.links = [];
+        this.visibleLinks = [];
+        // blockService.parseBlocksToCreateLinks();
+    }
+
+    createLinks() {
+      blockService.parseBlocksToCreateLinks();
+      this.visibleLinks = this.links.filter(l =>l.isBackbone);
     }
 
     getLinks() {
@@ -37,7 +44,9 @@ class LinkService {
     }
 
     addLink(links) {
-        this.links.push(...links);
+        console.log(links);
+        this.links.push(links);
+        console.log(this.links);
     }
 
     addVisibleLinks(key, n=0) {
@@ -52,7 +61,7 @@ class LinkService {
                 this.addVisibleLinks(l.to,n=1)
             });
             this.visibleLinks.push(...this.links.filter(l => l.from === key && l.type === "destination"));
-        } 
+        }
         else {
             const linksToAdd = this.links.filter(l =>
                 l.from === key && l.type === "utility"
@@ -71,14 +80,14 @@ class LinkService {
         //console.log(this.visibleLinks.filter(l => l.from === key));
         if (n > 0){
             this.visibleLinks.filter(l =>
-                l.from === key 
+                l.from === key
             ).forEach(l => {
                 //console.log("ForEach Loop Link:");
                 //console.log(l);
                 this.removeVisibleLinks(l.to, n=1)
             });
             this.visibleLinks = this.visibleLinks.filter(l => l.from !== key);
-        } 
+        }
         else {
             this.visibleLinks.filter(l =>
                 l.from === key && l.type === "utility"
