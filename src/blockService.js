@@ -34,6 +34,24 @@ class BlockService {
       return x.toString() + " " + y.toString();
     }
 
+    locationFind(x,y,curKey,distance) {
+      var data = this.getVisibleBlocks();
+      console.log('This is current state:'+data.getBlock(1).utilities);
+      if (data.hasChildren(curKey)) {
+        if (data.hasUtilities(curKey)) {
+          var utilArray = data.getBlock(curKey).utilities;
+          for (var i = 0; i < utilArray.length; i++) {
+            data.locationFind(x++,y,utilArray[i],distance);
+          }
+        } else if (data.hasDestination(curKey)) {
+          data.locationFind(x,y++,data.getBlock(curKey).destination,distance);
+        }
+      } else {
+        // this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance, x, y);
+        console.log('Cur Location Calc:' + data.calcLocation(x,y,distance));
+      }
+    }
+
     getBlocks() {
         console.log("All Blocks:");
         console.log(this.blocks);
