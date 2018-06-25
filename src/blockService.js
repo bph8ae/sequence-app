@@ -29,28 +29,70 @@ class BlockService {
     }
 
     calcLocation(distance, x, y) {
-      x = distance * x;
-      y = distance * y;
-      return x.toString() + " " + y.toString();
+      this.blocks.forEach(b => {
+        x = this.calculateHorizontalDepth(b.key);
+        y = this.calculateVerticalDepth(b.key);
+        x = distance * x;
+        y = distance * y;
+        console.log(b.key+'Location:');
+        console.log(x.toString() + " " + y.toString());
+      })
     }
 
-    locationFind(x,y,curKey,distance) {
-      var data = this.getVisibleBlocks();
-      console.log('This is current state:'+data.getBlock(1).utilities);
-      if (data.hasChildren(curKey)) {
-        if (data.hasUtilities(curKey)) {
-          var utilArray = data.getBlock(curKey).utilities;
-          for (var i = 0; i < utilArray.length; i++) {
-            data.locationFind(x++,y,utilArray[i],distance);
-          }
-        } else if (data.hasDestination(curKey)) {
-          data.locationFind(x,y++,data.getBlock(curKey).destination,distance);
-        }
-      } else {
-        // this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance, x, y);
-        console.log('Cur Location Calc:' + data.calcLocation(x,y,distance));
-      }
-    }
+    // locationFind(x,y,curKey,distance) {
+    //   var data = this.getVisibleBlocks();
+    //   console.log('This is current state:' + data;
+    //   if (data.getBlocks.hasChildren(curKey)) {
+    //     if (data.hasUtilities(curKey)) {
+    //       var utilArray = data.getBlock(curKey).utilities;
+    //       for (var i = 0; i < utilArray.length; i++) {
+    //         return data.locationFind(x++,y,utilArray[i],distance);
+    //       }
+    //     } else if (data.hasDestination(curKey)) {
+    //         return data.locationFind(x,y++,data.getBlock(curKey).destination,distance);
+    //     }
+    //   } else {
+    //     // this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance, x, y);
+    //     console.log('Cur Location Calc:' + data.calcLocation(x,y,distance));
+    //   }
+    // }
+
+    // locationFind(x,y,curKey,distance) {
+    //   if (this.visibleBlocks.hasChildren(curKey)) {
+    //     var xCur = x;
+    //     var yCur = y;
+    //     if (this.visibleBlocks.hasUtilities(curKey)) {
+    //       for (var i = 0; i < this.visibleBlocks.utilities.length; i++) {
+    //         curKey = this.visibleBlocks.utilities[i];
+    //         xCur = return locationFind(x++,y,curKey,distance);
+    //       }
+    //     } else if (this.visibleBlocks.hasDestination(curKey)) {
+    //         curKey = this.visibleBlocks.destination;
+    //         yCur = return locationFind(x,y++,curKey,distance);
+    //     } else {
+    //       this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance,xCur,yCur);
+    //     }
+    //   } else {
+    //     this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance,x,y);
+    //   }
+    // }
+
+    // xLocationFind(x,y,curKey) {
+    //   if (curKey === 0) {
+    //     return 0;
+    //   }
+    //
+    //   if (this.visibleBlocks.hasUtilities(curKey)) {
+    //     for (var i = 0; i < getUtilLength(curKey); i++) {
+    //       x++;
+    //       return this.visibleBlocks().xLocationFind(x,y,this.visibleBlocks.getBlock(curKey).utilities[i]);
+    //     }
+    //   }
+    // }
+
+    // getUtilLength(curKey) {
+    //   return this.visibleBlocks.getBlock(curKey).utilities.length;
+    // }
 
     getBlocks() {
         console.log("All Blocks:");
@@ -137,18 +179,19 @@ class BlockService {
         return 0;
     }
 
-    calculateVisibleVerticalDepth(key) {
-        var current = this.getVisibleBlock(key);
+    calculateVerticalDepth(key) {
+        var current = this.getBlock(key);
         if (current !== null) {
-            if (current.isRoot === true) {
+            if (current.parent === 0 && current.prior === 0) {
                 return 0;
             }
             else {
-                if (current.previous === current.parent) {//Utility
-                    return this.calculateVerticalDepth(current.previous);
+                if (current.prior === current.parent) {//Utility
+                    var offset = this.getBlock(current.prior).utilities.indexOf(key);
+                    return offset+this.calculateVerticalDepth(current.prior);
                 }
                 else {//Destination
-                    return 1+this.calculateVerticalDepth(current.previous);
+                    return 1+this.calculateVerticalDepth(current.prior);
                 }
             }
         }
@@ -159,26 +202,26 @@ class BlockService {
      * +1 for each Utility Destination + VisibleVerticalChildDepth of Destination
      * +VisibleVerticalChildDepth of each Utility
      */
-    calculateVisibleVerticalChildrenDepth(key) {
-        var current = this.getVisibleBlock(key);
-        if (current !== null) {
-            current.utilities.forEach(b => {
-                var util = this.getVisibleBlock(b);
-                if (util !== null) {
-                    if(this.hasDestination(util.key)) {
-                        return 1+
-                        this.calculateVisibleVerticalChildrenDepth(util.key)+
-                        this.calculateVisibleVerticalChildrenDepth(util.destination);
-                    }
-                    else {
-                        return this.calculateVisibleVerticalChildrenDepth(util.key);
-                    }
-                }
-            });
-            return current.utilities.length-1;
-        }
-        return 0;
-    }
+    // calculateVisibleVerticalChildrenDepth(key) {
+    //     var current = this.getVisibleBlock(key);
+    //     if (current !== null) {
+    //         current.utilities.forEach(b => {
+    //             var util = this.getVisibleBlock(b);
+    //             if (util !== null) {
+    //                 if(this.hasDestination(util.key)) {
+    //                     return 1+
+    //                     this.calculateVisibleVerticalChildrenDepth(util.key)+
+    //                     this.calculateVisibleVerticalChildrenDepth(util.destination);
+    //                 }
+    //                 else {
+    //                     return this.calculateVisibleVerticalChildrenDepth(util.key);
+    //                 }
+    //             }
+    //         });
+    //         return current.utilities.length-1;
+    //     }
+    //     return 0;
+    // }
 
     //Initializes the Links and VisibleLinks arrays
     parseBlocksToCreateLinks() {

@@ -8,7 +8,7 @@ export function toggleNode(e, obj) {
         const { key } = obj.part.data;
         if (isNodeExpanded(key)) {
             retractNode(key);
-        } 
+        }
         else {
             expandNode(key);
         }

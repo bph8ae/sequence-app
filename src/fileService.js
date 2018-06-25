@@ -18,7 +18,7 @@ class FileService {
 					if (data !== null) {
 						blockService.setBlocks(data);
 						linkService.createLinks();
-						blockService.locationFind(0,0,1,150);
+						blockService.calcLocation(150,0,0);
 						render();
 						console.log('Post Render');
 					}
