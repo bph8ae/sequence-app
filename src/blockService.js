@@ -34,8 +34,9 @@ class BlockService {
         y = this.calculateVerticalDepth(b.key);
         x = distance * x;
         y = distance * y;
-        console.log(b.key+'Location:');
-        console.log(x.toString() + " " + y.toString());
+        // console.log(b.key+'Location:');
+        // console.log(x.toString() + " " + y.toString());
+        this.getBlock(b.key).loc = x.toString() + " " + y.toString();
       })
     }
 
