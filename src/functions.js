@@ -27,6 +27,7 @@ export function expandNode(key) {
     if (doesNodeHaveChildren(key)) {
         blockService.addVisibleBlocks(key);
         linkService.addVisibleLinks(key);
+        blockService.calcLocation(150,0,0);
         render();
     }
 }
