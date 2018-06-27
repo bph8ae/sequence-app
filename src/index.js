@@ -23,7 +23,7 @@ diagram.nodeTemplate =
 			{
 				fill: "gold",
 				width: 100,
-				height: 100 }
+				height: 100}
 			//new go.Binding("fill", "color")
 		),
 		$(go.Panel, "Vertical",

@@ -29,6 +29,7 @@ class BlockService {
       this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
     }
 
+    //encapsulate better
     calcLocation(distance, x, y) {
         var maxArr = [];
         this.visibleBlocks.forEach(b => {
@@ -41,15 +42,31 @@ class BlockService {
             maxArr.push(y);
             console.log('Max Array: '+maxArr+ ' Key: '+b.key);
           }
+          this.getBlock(b.key).x = x;
+          this.getBlock(b.key).y = y;
           x = distance * x;
           y = distance * y;
           console.log('Locations Calculated: '+b.key+ ": " +x.toString() + " " + y.toString());
           this.getBlock(b.key).loc = x.toString() + " " + y.toString();
         })
-        this.visibleBlocks.forEach(b => {
-          if (this.getBlock(b.key).)
-        })
         console.log('Max Array: '+maxArr);
+        var max = Math.max(...maxArr);
+        this.visibleBlocks.forEach(b => {
+          if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
+            console.log('In Max Adjustment 1: '+b.key);
+            if (this.getBlock(b.key).y < max) {
+              console.log('In Max Adjustment 2: '+b.key);
+              this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
+              if (this.hasVisibleChildren(b.key)) {
+                var utilKey = this.getBlock(b.key).utilities;
+                utilKey.forEach(k => {
+                  console.log('utilKey: '+this.getBlock(k).x);
+                  this.getBlock(k).loc = (this.getBlock(k).x*distance).toString() + " " + ((max+1)*distance).toString();
+                })
+              }
+            }
+          }
+        });
     }
 
     // offsetDetection() {
@@ -252,15 +269,15 @@ class BlockService {
         return 0;
     }
 
-    calcMaxVerticalDepth(key) {
-      var current = this.getBlock(key);
-      var depthOffset = 1;
-      if (current !== null) {
-        current.utilities.forEach(b => {
-
-        })
-      }
-    }
+    // calcMaxVerticalDepth(key) {
+    //   var current = this.getBlock(key);
+    //   var depthOffset = 1;
+    //   if (current !== null) {
+    //     current.utilities.forEach(b => {
+    //
+    //     })
+    //   }
+    // }
 
     //Initializes the Links and VisibleLinks arrays
     parseBlocksToCreateLinks() {
