@@ -11,6 +11,7 @@ class BlockService {
         this.visibleBlocks;
     }
 
+    //Parses data from input JSON file into building block objects
     setBlocks(data) {
       // preserve newlines, etc - use valid JSON
       data = data.replace(/\\n/g, "\\n")
@@ -23,121 +24,56 @@ class BlockService {
                .replace(/\\f/g, "\\f");
       // remove non-printable and other non-valid JSON chars
       data = data.replace(/[\u0000-\u0019]+/g,"");
-      // console.log(data);
       this.blocks = JSON.parse(data);
-      // this.visibleBlocks = this.blocks.filter(b => b.depth === 0);
       this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
     }
 
-    //encapsulate better
+    //Calculates the location of each visible block in space
     calcLocation(distance, x, y) {
         var maxArr = [];
+        //loop through all visible blocks
         this.visibleBlocks.forEach(b => {
-          x = this.calculateHorizontalDepth(b.key);
-          // if (blockService.hasVisibleChildren(b.key) || linkService.hasVisibleChildren(b.key)) {
-          //   y = this.calculateVisibleVerticalChildrenDepth(b.key);
-          // } else {
-          y = this.calculateVerticalDepth(b.key);
-          if (!(this.isBackbone(b.key))) {
+          x = this.calculateHorizontalDepth(b.key); //Calculate horizontal layer
+          y = this.calculateVerticalDepth(b.key); //Calculate vertical layer
+          if (!(this.isBackbone(b.key))) { //Creates array of max layers for use in overlap detection
             maxArr.push(y);
             console.log('Max Array: '+maxArr+ ' Key: '+b.key);
           }
+          //store layer as x and y
           this.getBlock(b.key).x = x;
           this.getBlock(b.key).y = y;
+          //compute actual distance
           x = distance * x;
           y = distance * y;
           console.log('Locations Calculated: '+b.key+ ": " +x.toString() + " " + y.toString());
-          this.getBlock(b.key).loc = x.toString() + " " + y.toString();
+          this.getBlock(b.key).loc = x.toString() + " " + y.toString(); //set location
         })
-        console.log('Max Array: '+maxArr);
-        var max = Math.max(...maxArr);
-        this.visibleBlocks.forEach(b => {
-          if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
-            console.log('In Max Adjustment 1: '+b.key);
-            if (this.getBlock(b.key).y < max) {
-              console.log('In Max Adjustment 2: '+b.key);
-              this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
-              if (this.hasVisibleChildren(b.key)) {
-                var utilKey = this.getBlock(b.key).utilities;
-                utilKey.forEach(k => {
-                  console.log('utilKey: '+this.getBlock(k).x);
-                  this.getBlock(k).loc = (this.getBlock(k).x*distance).toString() + " " + ((max+1)*distance).toString();
-                })
-              }
-            }
-          }
-        });
+        //alter location to prevet overlap
+        this.overlapPrevention(maxArr,distance);
     }
 
-    // offsetDetection() {
-    //   this.visibleBlocks.forEach(b => {
-    //     if (this.isDestination(b.key)) {
-    //       var max = maxArr[maxArr.length-1];
-    //       console.log('key: '+b.key+' y:'+y+' max: '+max);
-    //       if (y < max) {
-    //         y = max+1;
-    //       }
-    //   })
-    // }
+    //Detects if overlap of blocks is possible and moves last backbone to max layer + 1
+    overlapPrevention(maxArr,distance) {
+      var max = Math.max(...maxArr); //find max depth possible
+      this.visibleBlocks.forEach(b => {
+        //determine if block is a destination block, is the last block of t
+        if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
+          if (this.getBlock(b.key).y < max) {
+            this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
+            if (this.hasVisibleChildren(b.key)) {
+              var utilKey = this.getBlock(b.key).utilities;
+              utilKey.forEach(k => {
+                this.getBlock(k).loc = (this.getBlock(k).x*distance).toString() + " " + ((max+1)*distance).toString();
+              })
+            }
+          }
+        }
+      });
+    }
 
     isDestination(key) {
       return this.getBlock(key).parent !== this.getBlock(key).prior;
     }
-
-    // locationFind(x,y,curKey,distance) {
-    //   var data = this.getVisibleBlocks();
-    //   console.log('This is current state:' + data;
-    //   if (data.getBlocks.hasChildren(curKey)) {
-    //     if (data.hasUtilities(curKey)) {
-    //       var utilArray = data.getBlock(curKey).utilities;
-    //       for (var i = 0; i < utilArray.length; i++) {
-    //         return data.locationFind(x++,y,utilArray[i],distance);
-    //       }
-    //     } else if (data.hasDestination(curKey)) {
-    //         return data.locationFind(x,y++,data.getBlock(curKey).destination,distance);
-    //     }
-    //   } else {
-    //     // this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance, x, y);
-    //     console.log('Cur Location Calc:' + data.calcLocation(x,y,distance));
-    //   }
-    // }
-
-    // locationFind(x,y,curKey,distance) {
-    //   if (this.visibleBlocks.hasChildren(curKey)) {
-    //     var xCur = x;
-    //     var yCur = y;
-    //     if (this.visibleBlocks.hasUtilities(curKey)) {
-    //       for (var i = 0; i < this.visibleBlocks.utilities.length; i++) {
-    //         curKey = this.visibleBlocks.utilities[i];
-    //         xCur = return locationFind(x++,y,curKey,distance);
-    //       }
-    //     } else if (this.visibleBlocks.hasDestination(curKey)) {
-    //         curKey = this.visibleBlocks.destination;
-    //         yCur = return locationFind(x,y++,curKey,distance);
-    //     } else {
-    //       this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance,xCur,yCur);
-    //     }
-    //   } else {
-    //     this.visibleBlocks.getBlock(curKey).loc = calcLocation(distance,x,y);
-    //   }
-    // }
-
-    // xLocationFind(x,y,curKey) {
-    //   if (curKey === 0) {
-    //     return 0;
-    //   }
-    //
-    //   if (this.visibleBlocks.hasUtilities(curKey)) {
-    //     for (var i = 0; i < getUtilLength(curKey); i++) {
-    //       x++;
-    //       return this.visibleBlocks().xLocationFind(x,y,this.visibleBlocks.getBlock(curKey).utilities[i]);
-    //     }
-    //   }
-    // }
-
-    // getUtilLength(curKey) {
-    //   return this.visibleBlocks.getBlock(curKey).utilities.length;
-    // }
 
     getBlocks() {
         console.log("All Blocks:");

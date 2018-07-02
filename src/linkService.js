@@ -4,20 +4,8 @@ import { blockService } from "./blockService";
 class LinkService {
 
     constructor() {
-        // this.links = [
-        //     {from:1, to:2, type:"utility", isBackbone:false},
-        //     {from:1, to:3, type:"destination", isBackbone:true},
-        //     {from:3, to:4, type:"utility", isBackbone:false},
-        //     {from:3, to:5, type:"utility", isBackbone:false},
-        //     {from:2, to:6, type:"utility", isBackbone:false},
-        //     {from:4, to:7, type:"utility", isBackbone:false},
-        //     {from:5, to:8, type:"destination", isBackbone:false},
-        //     {from:5, to:9, type:"utility", isBackbone:false},
-        //     {from:9, to:10, type:"destination", isBackbone:false}
-        // ];
         this.links = [];
         this.visibleLinks = [];
-        // blockService.parseBlocksToCreateLinks();
     }
 
     createLinks() {
@@ -56,8 +44,6 @@ class LinkService {
             const linksToAdd = this.links.filter(l =>
                 l.from === key && l.type === "destination"
             ).forEach(l => {
-                //console.log("ForEach Loop Link:");
-                //console.log(l);
                 this.addVisibleLinks(l.to,n=1)
             });
             this.visibleLinks.push(...this.links.filter(l => l.from === key && l.type === "destination"));
@@ -66,8 +52,6 @@ class LinkService {
             const linksToAdd = this.links.filter(l =>
                 l.from === key && l.type === "utility"
             ).forEach(l => {
-                //console.log("ForEach Loop Link:");
-                //console.log(l);
                 this.addVisibleLinks(l.to,n=1)
             });
             this.visibleLinks.push(...this.links.filter(l => l.from === key && l.type === "utility"));
@@ -82,8 +66,6 @@ class LinkService {
             this.visibleLinks.filter(l =>
                 l.from === key
             ).forEach(l => {
-                //console.log("ForEach Loop Link:");
-                //console.log(l);
                 this.removeVisibleLinks(l.to, n=1)
             });
             this.visibleLinks = this.visibleLinks.filter(l => l.from !== key);
@@ -92,8 +74,6 @@ class LinkService {
             this.visibleLinks.filter(l =>
                 l.from === key && l.type === "utility"
             ).forEach(l => {
-                //console.log("ForEach Loop Link:");
-                //console.log(l);
                 this.removeVisibleLinks(l.to, n=1)
             });
             this.visibleLinks = this.visibleLinks.filter(l => l.from !== key || l.type === "destination");
