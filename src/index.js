@@ -72,7 +72,7 @@ diagram.nodeTemplate =
 // Link Template describes how each Link should be constructed
 diagram.linkTemplate =
 	$(go.Link,
-		{ routing: go.Link.Orthogonal},
+		{ routing: go.Link.AvoidsNodes},
 		$(go.Shape, //Link
 			{fill: "black"}
 		),

@@ -57,13 +57,22 @@ class BlockService {
       var max = Math.max(...maxArr); //find max depth possible
       this.visibleBlocks.forEach(b => {
         //determine if block is a destination block, is the last block of t
+        if ((this.getBlock(b.key).utilities).length > 2) {
+          var offset = 0;
+          this.getBlock(b.key).utilities.forEach(u => {
+            console.log('In new part');
+            this.getBlock(u).loc = ((this.getBlock(u).x+offset)*distance).toString() + " " + (this.getBlock(u).y*distance).toString();
+          })
+        }
         if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
           if (this.getBlock(b.key).y < max) {
             this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
             if (this.hasVisibleChildren(b.key)) {
               var utilKey = this.getBlock(b.key).utilities;
+              var utilOffset = 0;
               utilKey.forEach(k => {
-                this.getBlock(k).loc = (this.getBlock(k).x*distance).toString() + " " + ((max+1)*distance).toString();
+                this.getBlock(k).loc = ((this.getBlock(k).x+utilOffset)*distance).toString() + " " + ((max+1)*distance).toString();
+                utilOffset++;
               })
             }
           }
