@@ -22,8 +22,6 @@ class LinkService {
     }
 
     getVisibleLinks() {
-        console.log("Visible Links:");
-        console.log(this.visibleLinks);
         return this.visibleLinks;
     }
 
@@ -32,9 +30,7 @@ class LinkService {
     }
 
     addLink(links) {
-        console.log(links);
         this.links.push(links);
-        console.log(this.links);
     }
 
     addVisibleLinks(key, n=0) {

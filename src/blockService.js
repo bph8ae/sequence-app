@@ -31,13 +31,13 @@ class BlockService {
     //Calculates the location of each visible block in space
     calcLocation(distance, x, y) {
         var maxArr = [];
+        var locations = [];
         //loop through all visible blocks
         this.visibleBlocks.forEach(b => {
           x = this.calculateHorizontalDepth(b.key); //Calculate horizontal layer
           y = this.calculateVerticalDepth(b.key); //Calculate vertical layer
           if (!(this.isBackbone(b.key))) { //Creates array of max layers for use in overlap detection
             maxArr.push(y);
-            console.log('Max Array: '+maxArr+ ' Key: '+b.key);
           }
           //store layer as x and y
           this.getBlock(b.key).x = x;
@@ -45,10 +45,9 @@ class BlockService {
           //compute actual distance
           x = distance * x;
           y = distance * y;
-          console.log('Locations Calculated: '+b.key+ ": " +x.toString() + " " + y.toString());
           this.getBlock(b.key).loc = x.toString() + " " + y.toString(); //set location
+          locations.push(x.toString() + " " + y.toString());
         })
-        //alter location to prevet overlap
         this.overlapPrevention(maxArr,distance);
     }
 
@@ -57,13 +56,12 @@ class BlockService {
       var max = Math.max(...maxArr); //find max depth possible
       this.visibleBlocks.forEach(b => {
         //determine if block is a destination block, is the last block of t
-        if ((this.getBlock(b.key).utilities).length > 2) {
-          var offset = 0;
-          this.getBlock(b.key).utilities.forEach(u => {
-            console.log('In new part');
-            this.getBlock(u).loc = ((this.getBlock(u).x+offset)*distance).toString() + " " + (this.getBlock(u).y*distance).toString();
-          })
-        }
+        // if ((this.getBlock(b.key).utilities).length > 2) {
+        //   var offset = 0;
+        //   this.getBlock(b.key).utilities.forEach(u => {
+        //     this.getBlock(u).loc = ((this.getBlock(u).x+offset)*distance).toString() + " " + (this.getBlock(u).y*distance).toString();
+        //   })
+        // }
         if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
           if (this.getBlock(b.key).y < max) {
             this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
@@ -85,8 +83,6 @@ class BlockService {
     }
 
     getBlocks() {
-        console.log("All Blocks:");
-        console.log(this.blocks);
         return this.blocks;
     }
 
@@ -99,8 +95,6 @@ class BlockService {
     }
 
     getVisibleBlocks() {
-        console.log("Visible Blocks:");
-        console.log(this.visibleBlocks);
         return this.visibleBlocks;
     }
 
@@ -109,13 +103,10 @@ class BlockService {
     }
 
     addVisibleBlocks(key) {
-        console.log("Key:"+key+" Adding Blocks:")
-        console.log(this.blocks.filter(b => b.parent === key));
         this.visibleBlocks.push(...this.blocks.filter(b => b.parent === key));
     }
 
     removeVisibleBlocks(key) {
-        console.log("Key:"+key+" Removing Blocks:");
         const blocksToRemove = this.visibleBlocks.filter(b => b.parent === key);
         if (blocksToRemove.length > 0) {
             blocksToRemove.forEach(b => this.removeVisibleBlocks(b.key));
@@ -170,14 +161,19 @@ class BlockService {
     }
 
     calculateVerticalDepth(key) {
-        var current = this.getBlock(key);
+        var current = this.getVisibleBlock(key);
         if (current !== null) {
             if (current.parent === 0 && current.prior === 0) {
                 return 0;
             }
             else {
-                if (current.prior === current.parent) {//Utility
+                if (current.prior === current.parent) { //Utility
                     var offset = this.getBlock(current.prior).utilities.indexOf(key);
+                    // if (offset > 0) {
+                    //   if (this.hasDestination(this.getBlock(current.prior).utilities[offset-1]))   {
+                    //     offset = offset + this.calculateVerticalDepth(this.getBlock(current.prior).utilities[offset-1]);
+                    //   }
+                    // }
                     return offset+this.calculateVerticalDepth(current.prior);
                 }
                 else {//Destination
@@ -194,7 +190,6 @@ class BlockService {
      */
     calculateVisibleVerticalChildrenDepth(key) {
         var current = this.getBlock(key);
-        console.log('Current State:' + current);
         if (current !== null) {
             current.utilities.forEach(b => {
                 var util = this.getBlock(b);
@@ -213,16 +208,6 @@ class BlockService {
         }
         return 0;
     }
-
-    // calcMaxVerticalDepth(key) {
-    //   var current = this.getBlock(key);
-    //   var depthOffset = 1;
-    //   if (current !== null) {
-    //     current.utilities.forEach(b => {
-    //
-    //     })
-    //   }
-    // }
 
     //Initializes the Links and VisibleLinks arrays
     parseBlocksToCreateLinks() {
