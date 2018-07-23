@@ -7,7 +7,7 @@ import { blockService } from "./blockService";
 import { linkService } from "./linkService";
 
 /*
-This class sets up user interface using GoJS library
+This class sets up the user interface and graphical design using GoJS library
 */
 
 document.getElementById('fileDiv').addEventListener('change', fileService.handleFileSelect, false);
@@ -126,33 +126,42 @@ diagram.nodeTemplate =
 			toolTip: commonToolTip
 		},
 		new go.Binding("location", "loc", go.Point.parse),
-		$(go.Shape, "Square",  // use this kind of figure for the Shape
-		// bind Shape.fill to Node.data.color
+		$(go.Shape, "Procedure",  // use this kind of figure for the Shape
 			{
-				fill: "gold",
 				width: 100,
-				height: 100}
-			//new go.Binding("fill", "color")
+				height: 100},
+			new go.Binding("fill", "nodeType", function(nodeType) {
+				if (nodeType === 'Utility') {
+					return '#cce6ff';
+				} else {
+					return 'lightgreen';
+				}
+			})
 		),
 		$(go.Panel, "Vertical",
-			$(go.TextBlock,
-				{ margin: 3 },  // some room around the text
-				// bind TextBlock.text to Node.data.key
-				new go.Binding("text", "key", (key) => "key:"+key)
-			),
+		// 	$(go.TextBlock,
+		// 		{ margin: 3 },  // some room around the text
+		// 		// bind TextBlock.text to Node.data.key
+		// 		new go.Binding("text", "key", (key) => "key:"+key)
+		// 	),
 			$(go.TextBlock,
 				{
 					margin: 3,
-					font: "bold 12pt sans-serif"
+					font: "bold 10pt sans-serif",
+					width: 80,
+					wrap: go.TextBlock.WrapFit
 				},  // some room around the text
 				// bind TextBlock.text to Node.data.key
 				new go.Binding("text", "name")
 			),
+			// $(go.TextBlock,
+			// 	{ margin: 3 },  // some room around the text
+			// 	// bind TextBlock.text to Node.data.key
+			// 	new go.Binding("text", "parent", (parent) => "parent:"+parent)
+			// ),
 			$(go.TextBlock,
-				{ margin: 3 },  // some room around the text
-				// bind TextBlock.text to Node.data.key
-				new go.Binding("text", "parent", (parent) => "parent:"+parent)
-			),
+			{ margin: 4, editable: true, text: "Add Note: "}
+		),
 			//Feature - Remove Button if no children
 		),
 		$("Button",
