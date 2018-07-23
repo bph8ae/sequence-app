@@ -6,6 +6,10 @@ import { fileService } from "./fileService";
 import { blockService } from "./blockService";
 import { linkService } from "./linkService";
 
+/*
+This class sets up user interface using GoJS library
+*/
+
 document.getElementById('fileDiv').addEventListener('change', fileService.handleFileSelect, false);
 
 var $ = go.GraphObject.make;
@@ -14,6 +18,7 @@ var diagram = new go.Diagram("myDiagramDiv");
 	diagram.model = new go.GraphLinksModel(
 	);
 
+	//Add hover callout functionality
 	diagram.toolManager.hoverDelay = 200; //In MilliSeconds
   diagram.toolManager.toolTipDuration = 300000; //In MilliSeconds
 	var commonToolTip =
@@ -23,6 +28,7 @@ var diagram = new go.Diagram("myDiagramDiv");
         $(go.Shape, { fill: "#FFFFCC" }),
         $(go.Panel, "Vertical",
             { margin: 3 },
+						//Show csect of block
             $(go.TextBlock,  //Bound to node data
                 {
                     width: 500,
@@ -32,6 +38,7 @@ var diagram = new go.Diagram("myDiagramDiv");
                 },
                 new go.Binding("text", "csect", function(csect) { return "CSECT: " + csect; })
 							),
+							//Show name of block
 							$(go.TextBlock,  //Bound to node data
 	                {
 	                    width: 500,
@@ -41,6 +48,8 @@ var diagram = new go.Diagram("myDiagramDiv");
 	                },
 									new go.Binding("text", "name", function(name) { return "Name: " + name + '\n'; })
 								),
+							//Show block Description
+							//NOTE: CURRENTLY HARD CODED IN
 							$(go.TextBlock,  //Bound to node data
 									{
 											width: 500,
@@ -51,6 +60,7 @@ var diagram = new go.Diagram("myDiagramDiv");
 									},
 										// new go.Binding("text", "description", function(description) { return "Description: Please work :)" + '\n'; })
 									),
+							//Show name of previous block
 							$(go.TextBlock,  //Bound to node data
 			            {
 			               width: 500,
@@ -66,6 +76,7 @@ var diagram = new go.Diagram("myDiagramDiv");
 											}
 										 	})
 									),
+							//Show utilities of current block
 							$(go.TextBlock,  //Bound to node data
 									{
 										 width: 500,
@@ -82,6 +93,7 @@ var diagram = new go.Diagram("myDiagramDiv");
 												return "Utilities: " + utils;
 											})
 									),
+							//Show destination of current block
 							$(go.TextBlock,  //Bound to node data
 									{
 										 width: 500,
@@ -92,6 +104,8 @@ var diagram = new go.Diagram("myDiagramDiv");
 											new go.Binding("text", "destination", function(destination) { return "Destination: " +
 												blockService.getBlock(destination).name + '\n'; })
 									),
+							//Show lines of code of current block
+							//NOTE: HARD CODED IN
 							$(go.TextBlock,  //Bound to node data
 									{
 										 width: 500,
@@ -192,17 +206,6 @@ diagram.initialContentAlignment = go.Spot.Center;
 // enable Ctrl-Z to undo and Ctrl-Y to redo
 diagram.undoManager.isEnabled = true;
 diagram.animationManager.isEnabled = false;
-
-// document.getElementById('renderButton').addEventListener('click', function() {
-// 	console.log('in init');
-// 	console.log(fileService.data);
-// 	if (fileService.data !== null) {
-// 		console.log('in funct');
-// 		blockService.setBlocks();
-// 		renderDiagram();
-// 		console.log('post render');
-// 	}
-// });
 
 export function renderDiagram() {
 	console.log("\n====================REDRAWING DIAGRAM====================\n\n")

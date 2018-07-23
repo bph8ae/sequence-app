@@ -3,6 +3,12 @@ import { fileService } from "./fileService";
 import { functions } from "./block.js";
 import "./functions.js";
 
+/*
+This class adds functionality to building block objects. It includes methods for
+creating building block objects, setting their location automatically, and
+returning pertinent data about the blocks and the block object itself
+*/
+
 //Block Data Functionality
 class BlockService {
 
@@ -48,6 +54,7 @@ class BlockService {
           this.getBlock(b.key).loc = x.toString() + " " + y.toString(); //set location
           locations.push(x.toString() + " " + y.toString());
         })
+        //moves backbone block down vertically to prevent overlap with utilities
         this.overlapPrevention(maxArr,distance);
     }
 
@@ -55,9 +62,13 @@ class BlockService {
     overlapPrevention(maxArr,distance) {
       var max = Math.max(...maxArr); //find max depth possible
       this.visibleBlocks.forEach(b => {
+        //check if current block is a destination itself, if it does not have a destination, and it has utilities
         if (this.isDestination(b.key) && this.getBlock(b.key).destination === "" && this.hasUtilities(b.key)) {
+          //check if current block's y layer is less than the max utility layer
           if (this.getBlock(b.key).y < max) {
+            //reset y location to max+1
             this.getBlock(b.key).loc = (this.getBlock(b.key).x).toString() + " " + ((max+1)*distance).toString();
+            //update locations of any utilities to match the same layer
             if (this.hasVisibleChildren(b.key)) {
               var utilKey = this.getBlock(b.key).utilities;
               var utilOffset = 0;
@@ -71,34 +82,42 @@ class BlockService {
       });
     }
 
+    //returns true if the block is a destination block
     isDestination(key) {
       return this.getBlock(key).parent !== this.getBlock(key).prior;
     }
 
+    //return all building block objects
     getBlocks() {
         return this.blocks;
     }
 
+    //returns building block corresponding to passed key identifier
     getBlock(key) {
         return this.blocks.find(b => b.key === key);
     }
 
+    //returns root block of sequence trace
     getRoot() {
         return this.blocks.find(b => b.isRoot === true);
     }
 
+    //returns all rendered visible block objects
     getVisibleBlocks() {
         return this.visibleBlocks;
     }
 
+    //returns visible block corresponding to key identifier
     getVisibleBlock(key) {
         return this.visibleBlocks.find(b => b.key === key);
     }
 
+    //pushes block with corresponding key onto visible block stack
     addVisibleBlocks(key) {
         this.visibleBlocks.push(...this.blocks.filter(b => b.parent === key));
     }
 
+    //removes block with corresponding key from visible block stack
     removeVisibleBlocks(key) {
         const blocksToRemove = this.visibleBlocks.filter(b => b.parent === key);
         if (blocksToRemove.length > 0) {
@@ -107,17 +126,22 @@ class BlockService {
         this.visibleBlocks = this.visibleBlocks.filter(b => b.parent !== key);
     }
 
+    //returns true if building block has any destinations or utilities
     hasChildren(key) {
         return (this.blocks.filter(b => b.parent === key).length > 0);
     }
 
+    //returns true if building block has any visible destinations or utilities
     hasVisibleChildren(key) {
         return (this.visibleBlocks.filter(b => b.parent === key).length > 0);
     }
 
+    //returns true if buildilng block is part of sequence backbaone
     isBackbone(key) {
+      // check if block has a destination
        if (this.hasDestination(key)) {
          const destKey = this.getBlock(key).destination;
+         //check if destination of current block has a parent of 0 (indicating backbone) and destination parent != prior
          if ((this.getBlock(destKey).parent === 0) && (this.getBlock(destKey).parent !== this.getBlock(destKey).prior)) {
            return true;
          } else {
@@ -126,6 +150,7 @@ class BlockService {
      }
     }
 
+    //returns true if building block has a destination
     hasDestination(key) {
         if (this.getBlock(key).destination !== null && this.getBlock(key).destination !== "") {
             return true;
@@ -133,6 +158,7 @@ class BlockService {
         return false;
     }
 
+    //returns true if building block has any utilities
     hasUtilities(key) {
         if (this.getBlock(key).utilities !== [] && this.getBlock(key).utilities !== null) {
             return true;
@@ -140,12 +166,18 @@ class BlockService {
         return false;
     }
 
+    //recursive function to calculate horizontal depth of a block based its position
+    //relative to the backbone key (0)
     calculateHorizontalDepth(key) {
         var current = this.getBlock(key);
+        //check if valid object
         if (current !== null) {
+            //if current block part of backbone return 0 layer
             if (current.parent === 0) {
                 return 0;
             }
+            //recursively traverse to farthest horizontal block and add 1 to layer
+            //returned until backbone reached
             else {
                 return 1+this.calculateHorizontalDepth(current.parent);
             }
@@ -153,23 +185,24 @@ class BlockService {
         return 0;
     }
 
+    //recursive function to calculate vertical depth of a block
     calculateVerticalDepth(key) {
         var current = this.getVisibleBlock(key);
         if (current !== null) {
+            //root node
             if (current.parent === 0 && current.prior === 0) {
                 return 0;
             }
             else {
-                if (current.prior === current.parent) { //Utility
+                //find vertical depth for a utility (defined by parent = prior)
+                if (current.prior === current.parent) {
+                    //find vertical offset based on index of current block in the utility array of prior block
                     var offset = this.getBlock(current.prior).utilities.indexOf(key);
-                    // if (offset > 0) {
-                    //   if (this.hasDestination(this.getBlock(current.prior).utilities[offset-1]))   {
-                    //     offset = offset + this.calculateVerticalDepth(this.getBlock(current.prior).utilities[offset-1]);
-                    //   }
-                    // }
+                    //add offset
                     return offset+this.calculateVerticalDepth(current.prior);
                 }
-                else {//Destination
+                //find vertical depth for destination
+                else {
                       return 1+this.calculateVerticalDepth(current.prior);
                   }
                 }
@@ -181,30 +214,31 @@ class BlockService {
      * +1 for each Utility Destination + VisibleVerticalChildDepth of Destination
      * +VisibleVerticalChildDepth of each Utility
      */
-    calculateVisibleVerticalChildrenDepth(key) {
-        var current = this.getBlock(key);
-        if (current !== null) {
-            current.utilities.forEach(b => {
-                var util = this.getBlock(b);
-                if (util !== null) {
-                    if (this.hasDestination(util.key)) {
-                        return 1+
-                        this.calculateVisibleVerticalChildrenDepth(util.key)+
-                        this.calculateVisibleVerticalChildrenDepth(util.destination);
-                    }
-                    else {
-                        return this.calculateVisibleVerticalChildrenDepth(util.key);
-                    }
-                }
-            });
-            return current.utilities.length-1;
-        }
-        return 0;
-    }
+    // calculateVisibleVerticalChildrenDepth(key) {
+    //     var current = this.getBlock(key);
+    //     if (current !== null) {
+    //         current.utilities.forEach(b => {
+    //             var util = this.getBlock(b);
+    //             if (util !== null) {
+    //                 if (this.hasDestination(util.key)) {
+    //                     return 1+
+    //                     this.calculateVisibleVerticalChildrenDepth(util.key)+
+    //                     this.calculateVisibleVerticalChildrenDepth(util.destination);
+    //                 }
+    //                 else {
+    //                     return this.calculateVisibleVerticalChildrenDepth(util.key);
+    //                 }
+    //             }
+    //         });
+    //         return current.utilities.length-1;
+    //     }
+    //     return 0;
+    // }
 
-    //Initializes the Links and VisibleLinks arrays
+    //Traverses all building blocks to create links- uses linkService class
     parseBlocksToCreateLinks() {
         this.blocks.forEach(b => {
+            //Create destination link from current block to next block
             if (this.hasDestination(b.key)) {
                 var destinationLink = {from:b.key, to:b.destination, type:"destination", isBackbone:false};
                 if (this.isBackbone(b.key)) {
@@ -212,6 +246,7 @@ class BlockService {
                 }
                 linkService.addLink(destinationLink);
             }
+            //Create utility link from current block to utility blocks
             if (this.hasUtilities(b.key)) {
               for (var i = 0; i < b.utilities.length; i++) {
                 var utilityLink = {from:b.key, to:b.utilities[i], type:"utility", isBackbone:false};
