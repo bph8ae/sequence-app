@@ -46,7 +46,7 @@ class FileService {
 						header: ["csect","name","description","builtByScenario","usedByScenario","linesOfCode"]
 					});
 					var json_object = JSON.stringify(row_object);
-					console.log('new line: '+json_object);
+					console.log('new line: '+row_object);
 				// });
 
 			};
