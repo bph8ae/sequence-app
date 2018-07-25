@@ -24,7 +24,8 @@ import {
 This class sets up the user interface and graphical design using GoJS library
 */
 
-document.getElementById('fileDiv').addEventListener('change', fileService.handleFileSelect, false);
+document.getElementById('JSONfileDiv').addEventListener('change', fileService.handleFileSelect, false);
+document.getElementById('ExcelfileDiv').addEventListener('change', fileService.excelRead, false);
 document.getElementById('expandButton').addEventListener('click', expandAllNodes, false);
 document.getElementById('retractButton').addEventListener('click', retractAllNodes, false);
 var $ = go.GraphObject.make;
@@ -154,15 +155,15 @@ diagram.nodeTemplate =
 			{
 				width: 100,
 				height: 100,
-				fill: "lightgreen"
+				// fill: "lightgreen"
 			},
-			// new go.Binding("fill", "nodeType", function(nodeType) {
-			// 	if (nodeType === 'Utility') {
-			// 		return '#cce6ff';
-			// 	} else {
-			// 		return 'lightgreen';
-			// 	}
-			// })
+			new go.Binding("fill", "nodeType", function(nodeType) {
+				if (nodeType === 'Utility') {
+					return '#cce6ff';
+				} else {
+					return 'lightgreen';
+				}
+			})
 		),
 		$(go.Panel, "Vertical",
 			$(go.TextBlock, {
@@ -247,74 +248,203 @@ diagram.linkTemplate =
 	);
 
 
-//Legend
 diagram.add(
-	$(go.Part, go.Panel.Position, {
-			padding: 10,
-			layerName: "Grid",
-			_viewPosition: new go.Point(420, 0)
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 0) // some position in the viewport,
+			// not in document coordinates
 		},
 		$(go.TextBlock, "Legend", {
-			font: "bold 14pt sans-serif",
+			font: "bold 20pt sans-serif",
 			stroke: "black"
-		}),
-		$(go.Shape, "DividedEvent", {
-			position: new go.Point(0, 35),
-			fill: "white",
-			stroke: "black",
-			desiredSize: new go.Size(20, 20)
-		}),
-		$(go.TextBlock, "Run / Program / System", {
-			position: new go.Point(35, 39),
-			font: "bold 8pt sans-serif",
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 50) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Hover Over Blocks for Callouts", {
+			font: "bold 12pt sans-serif",
 			stroke: "black"
-		}),
-		$(go.Shape, "MagneticTape", {
-			position: new go.Point(0, 65),
-			fill: "white",
-			stroke: "black",
-			desiredSize: new go.Size(20, 20)
-		}),
-		$(go.TextBlock, "Flat File", {
-			position: new go.Point(35, 69),
-			font: "bold 8pt sans-serif",
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 75) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Single Arrow- Destination Link", {
+			font: "bold 12pt sans-serif",
 			stroke: "black"
-		}),
-		$(go.Shape, "LineH", {
-			position: new go.Point(0, 95),
-			fill: "white",
-			stroke: "black",
-			desiredSize: new go.Size(20, 20)
-		}),
-		$(go.Shape, "Pointer", {
-			position: new go.Point(18, 102),
-			fill: "gray",
-			stroke: "black",
-			desiredSize: new go.Size(6, 6)
-		}),
-		$(go.TextBlock, "Interface Connection", {
-			position: new go.Point(35, 99),
-			font: "bold 8pt sans-serif",
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 100) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Double Arrow- Utility Link", {
+			font: "bold 12pt sans-serif",
 			stroke: "black"
-		}),
-		$(go.Shape, "LineH", {
-			position: new go.Point(0, 125),
-			fill: "red",
-			stroke: "red",
-			desiredSize: new go.Size(20, 20)
-		}),
-		$(go.Shape, "Pointer", {
-			position: new go.Point(18, 132),
-			fill: "red",
-			stroke: "red",
-			desiredSize: new go.Size(6, 6)
-		}),
-		$(go.TextBlock, "Critical Interface", {
-			position: new go.Point(35, 129),
-			font: "bold 8pt sans-serif",
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 125) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Blue Blocks- Utility", {
+			font: "bold 12pt sans-serif",
+			stroke: "#cce6ff"
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 150) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Green Blocks- Destination", {
+			font: "bold 12pt sans-serif",
+			stroke: "lightgreen"
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
+
+
+diagram.add(
+	$(go.Part, {
+			layerName: "Grid", // must be in a Layer that is Layer.isTemporary,
+			// to avoid being recorded by the UndoManager
+			_viewPosition: new go.Point(1000, 175) // some position in the viewport,
+			// not in document coordinates
+		},
+		$(go.TextBlock, "Click on 'Add Note' to edit text", {
+			font: "bold 12pt sans-serif",
 			stroke: "black"
-		})
-	));
+		})));
+
+// Whenever the Diagram.position or Diagram.scale change,
+// update the position of all simple Parts that have a _viewPosition property.
+diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
+	var dia = e.diagram;
+	dia.startTransaction("fix Parts");
+	// only iterates through simple Parts in the diagram, not Nodes or Links
+	dia.parts.each(function(part) {
+		// and only on those that have the "_viewPosition" property set to a Point
+		if (part._viewPosition) {
+			part.position = dia.transformViewToDoc(part._viewPosition);
+			part.scale = 1 / dia.scale;
+		}
+	});
+	dia.commitTransaction("fix Parts");
+});
 
 // the Model holds only the essential information describing the diagram
 
