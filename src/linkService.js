@@ -15,7 +15,17 @@ class LinkService {
     //Creates links using blockService function and filters to only show visible links in backbone
     createLinks() {
       blockService.parseBlocksToCreateLinks();
-      this.visibleLinks = this.links.filter(l =>l.isBackbone);
+      this.visibleLinks = this.links.filter(l => l.isBackbone);
+    }
+
+    //Display all Links
+    expandAllLinks() {
+      this.visibleLinks = this.links;
+    }
+
+    //Display only the backbone Links
+    retractAllLinks() {
+      this.visibleLinks = this.links.filter(l => l.isBackbone);
     }
 
     //Returns all link objects

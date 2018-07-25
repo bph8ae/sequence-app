@@ -6,7 +6,9 @@ import {
 	retractNode,
 	toggleNode,
 	isNodeExpanded,
-	doesNodeHaveChildren
+	doesNodeHaveChildren,
+	expandAllNodes,
+	retractAllNodes
 } from "./functions";
 import {
 	fileService
@@ -23,7 +25,8 @@ This class sets up the user interface and graphical design using GoJS library
 */
 
 document.getElementById('fileDiv').addEventListener('change', fileService.handleFileSelect, false);
-
+document.getElementById('expandButton').addEventListener('click', expandAllNodes, false);
+document.getElementById('retractButton').addEventListener('click', retractAllNodes, false);
 var $ = go.GraphObject.make;
 
 var diagram = new go.Diagram("myDiagramDiv");

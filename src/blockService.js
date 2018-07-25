@@ -40,6 +40,16 @@ class BlockService {
     this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
   }
 
+  //Display all blocks
+  expandAllBlocks() {
+    this.visibleBlocks = this.blocks;
+  }
+
+  //Display only the backbone blocks
+  retractAllBlocks() {
+    this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
+  }
+
   //Calculates the location of each visible block in space
   calcLocation(distance, x, y) {
     var maxArr = [];
@@ -234,7 +244,7 @@ class BlockService {
   setVisibleVerticalDepths(key, layer) {
     var currentBlock = this.getVisibleBlock(key);
     if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
-      console.log("Setting Key "+key+" to Layer "+layer);
+      //console.log("Setting Key "+key+" to Layer "+layer);
       this.getVisibleBlock(key).y = layer;
       var utilityDepth = 0;
       var utilityLength = 0;
