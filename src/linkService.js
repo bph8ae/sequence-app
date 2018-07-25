@@ -98,9 +98,19 @@ class LinkService {
         return (this.links.filter(l => l.from === key && l.type === "destination").length > 0);
     }
 
+    //Returns true if visibleLink of type destination
+    hasVisibleDestination(key) {
+        return (this.visibleLinks.filter(l => l.from === key && l.type === "destination").length > 0);
+    }
+
     //Returns true if link is of type utility
     hasUtilities(key) {
         return (this.links.filter(l => l.from === key && l.type === "utility").length > 0);
+    }
+
+    //Returns true if visibleLink of type utility
+    hasUtilities(key) {
+        return (this.visibleLinks.filter(l => l.from === key && l.type === "utility").length > 0);
     }
 
     //Returns true if block has utility links
