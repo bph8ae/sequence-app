@@ -44,5 +44,6 @@ export function expandNode(key) {
 export function retractNode(key) {
     blockService.removeVisibleBlocks(key);
     linkService.removeVisibleLinks(key);
+    blockService.calcLocation(150,0,0);
     render();
 }
