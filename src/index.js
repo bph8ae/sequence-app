@@ -24,10 +24,12 @@ import {
 This class sets up the user interface and graphical design using GoJS library
 */
 
+//Sets up actions for buttons in html file to read in files and expand and retract all nodes
 document.getElementById('JSONfileDiv').addEventListener('change', fileService.handleFileSelect, false);
 document.getElementById('ExcelfileDiv').addEventListener('change', fileService.excelRead, false);
 document.getElementById('expandButton').addEventListener('click', expandAllNodes, false);
 document.getElementById('retractButton').addEventListener('click', retractAllNodes, false);
+
 var $ = go.GraphObject.make;
 
 var diagram = new go.Diagram("myDiagramDiv");
@@ -155,8 +157,8 @@ diagram.nodeTemplate =
 			{
 				width: 100,
 				height: 100,
-				// fill: "lightgreen"
 			},
+			//Change color of building block based on type
 			new go.Binding("fill", "nodeType", function(nodeType) {
 				if (nodeType === 'Utility') {
 					return '#cce6ff';
@@ -169,7 +171,6 @@ diagram.nodeTemplate =
 			$(go.TextBlock, {
 					margin: 3
 				}, // some room around the text
-				// bind TextBlock.text to Node.data.key
 				new go.Binding("text", "key", (key) => "key:" + key)
 			),
 			$(go.TextBlock, {
@@ -178,9 +179,9 @@ diagram.nodeTemplate =
 					width: 80,
 					wrap: go.TextBlock.WrapFit
 				}, // some room around the text
-				// bind TextBlock.text to Node.data.key
 				new go.Binding("text", "name")
 			),
+			//Uncomment for testing purposes
 			// $(go.TextBlock,
 			// 	{ margin: 3 },  // some room around the text
 			// 	// bind TextBlock.text to Node.data.key
@@ -237,6 +238,7 @@ diagram.linkTemplate =
 				fill: "black",
 				stroke: "black"
 			},
+			//Add backward arrow if utility link
 			new go.Binding("fromArrow", "type", function(type) {
 				if (type === "utility") {
 					return "Backward";
@@ -367,6 +369,7 @@ diagram.add(
 		})
 	));
 
+//Allows legend to scroll with user
 diagram.addDiagramListener("ViewportBoundsChanged", function(e) {
 	var dia = e.diagram;
 	dia.startTransaction("fix Parts");

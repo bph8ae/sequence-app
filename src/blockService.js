@@ -126,11 +126,12 @@ class BlockService {
 		return (this.visibleBlocks.filter(b => b.parent === key).length > 0);
 	}
 
+	//returns utility block objects of current building block that are visible
 	getVisibleUtilities(key) {
 		return this.visibleBlocks.filter(b => b.parent === key && b.prior == key);
 	}
 
-	//returns true if buildilng block is part of sequence backbaone
+	//returns true if building block is part of sequence backbaone
 	isBackbone(key) {
 		// check if block has a destination
 		if (this.hasDestination(key)) {
@@ -244,30 +245,23 @@ class BlockService {
 	setVisibleVerticalDepths(key, layer) {
 		var currentBlock = this.getVisibleBlock(key);
 		if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
-			//console.log("Setting Key "+key+" to Layer "+layer);
 			this.getVisibleBlock(key).y = layer;
 			var utilityDepth = 0;
 			var utilityLength = 0;
 			if (this.hasVisibleUtilities(key)) {
 				var utilities = this.getVisibleUtilities(key);
-				//console.log("Has Visible Utilities")
-				//console.log(utilities);
 				utilityLength = utilities.length - 1;
-				//console.log("Utility Length-1: "+utilityLength);
 				for (var i = 0; i <= utilityLength; i++) {
 					if (i === 0) {
-						//console.log("key "+utilities[i].key+" i = 0, layer " + layer);
 						this.setVisibleVerticalDepths(utilities[i].key, layer);
 					} else {
 						var newLayer = layer + i + utilityDepth;
-						//console.log("key "+utilities[i].key+ " i = " + i + ", newlayer " + newLayer);
 						this.setVisibleVerticalDepths(utilities[i].key, newLayer);
 					}
 					utilityDepth += this.calculateVisibleVerticalDepth(utilities[i].key);
 				}
 			}
 			if (this.hasVisibleDestination(key)) {
-				//console.log("Key "+key+" Has Visible Destination "+currentBlock.destination);
 				layer++;
 				this.setVisibleVerticalDepths(currentBlock.destination, layer + utilityDepth + utilityLength);
 			}

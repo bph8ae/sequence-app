@@ -11,7 +11,9 @@ import * as XLSX from 'xlsx';
 
 /*
 File Handler class with ability to read in JSON files upon click of render button
-and create blocks, create links, and set locations
+to create blocks, create links, and set locations. Also has functionality to
+read in .xlsx files from SharePoint URL using XLSX SheetJS library for automated
+description and lines of code updating
 */
 
 class FileService {
@@ -140,6 +142,7 @@ class FileService {
 			// oReq.send();
 		}
 
+		//handles JSON input file to create blocks and links
 		handleFileSelect(input) {
 			const file = input.target.files[0];
 			const reader = new FileReader();
@@ -153,8 +156,9 @@ class FileService {
 						blockService.setBlocks(data);
 						//create link objects
 						linkService.createLinks();
-						//set locations of blocks using parameters (distance,x,y)
+						//set locations of blocks using parameters (distance between blocks (pixels),x,y)
 						blockService.calcLocation(150, 0, 0);
+						//render diagram
 						render();
 						console.log('Post Render');
 					}
