@@ -36,7 +36,11 @@ class BlockService {
 			.replace(/\\f/g, "\\f");
 		// remove non-printable and other non-valid JSON chars
 		data = data.replace(/[\u0000-\u0019]+/g, "");
-		this.blocks = JSON.parse(data);
+		try{
+			this.blocks = JSON.parse(data);
+		} catch (error) {
+			alert('Improperly formatted JSON');
+		}
 		this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
 	}
 

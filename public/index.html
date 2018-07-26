@@ -61,16 +61,16 @@
     <script>
         function checkJSONextension() {
             var file = document.querySelector("#JSONfileDiv");
-            if (/\.(json)$/i.test(file.files[0].name) === false) {
-                alert("Please select a json file!");
+            if (/\.(json|txt)$/i.test(file.files[0].name) === false) {
+                alert("Please select a json formatted file (.json or .txt)!");
             }
         }
     </script>
     <script>
         function checkXLSXextension() {
             var file = document.querySelector("#ExcelfileDiv");
-            if (/\.(xlsx)$/i.test(file.files[0].name) === false) {
-                alert("Please select an xlsx file!");
+            if (/\.(xlsx|xls)$/i.test(file.files[0].name) === false) {
+                alert("Please select an xlsx or xls file!");
             }
         }
     </script>
