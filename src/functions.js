@@ -59,15 +59,14 @@ export function retractNode(key) {
 
 //expands all blocks by setting visibleBlocks and visibleLinks to Blocks and Links
 export function expandAllNodes() {
-	console.log("UNCOMMENT OUT THE EXPAND FUNCTION");
-	//blockService.expandAllBlocks();
-	//linkService.expandAllLinks();
-	//blockService.calcLocation(150,0,0);
-	//render();
+	blockService.expandAllBlocks();
+	linkService.expandAllLinks();
+	blockService.calcLocation(150,0,0);
+	render();
 }
+
 //retracts all blocks by filtering visibleBlocks and visibleLinks
 export function retractAllNodes() {
-	console.log("retracting");
 	blockService.retractAllBlocks();
 	linkService.retractAllLinks();
 	blockService.calcLocation(150, 0, 0);
