@@ -1,3 +1,5 @@
+import * as go from 'gojs';
+
 import {
 	blockService
 } from "./blockService";
@@ -23,11 +25,19 @@ export function toggleNode(e, obj) {
 		} = obj.part.data;
 		if (isNodeExpanded(key)) {
 			retractNode(key);
+			// scrollToBlock(key);
 		} else {
 			expandNode(key);
+			// scrollToBlock(key);
 		}
 	}
 }
+
+//Uses GoJS to scroll to y location of expanded or retracted block
+// function scrollToBlock(key) {
+// 	var blockY = blockService.getBlock(key).y * 150;
+// 	go.Diagram.scroll('pixel','down',blockY);
+// }
 
 //checks if node is expanded based on visible children and returns true if expanded
 export function isNodeExpanded(key) {
