@@ -1,4 +1,6 @@
-import { blockService } from "./blockService";
+import {
+    blockService
+} from "./blockService";
 
 /*
 This class provides functionality around link creation and manipulation
@@ -7,6 +9,7 @@ This class provides functionality around link creation and manipulation
 //Link Data Functionality
 class LinkService {
 
+    //Creates the linkService
     constructor() {
         this.links = [];
         this.visibleLinks = [];
@@ -14,18 +17,18 @@ class LinkService {
 
     //Creates links using blockService function and filters to only show visible links in backbone
     createLinks() {
-      blockService.parseBlocksToCreateLinks();
-      this.visibleLinks = this.links.filter(l => l.isBackbone);
+        blockService.parseBlocksToCreateLinks();
+        this.visibleLinks = this.links.filter(l => l.isBackbone);
     }
 
     //Display all Links
     expandAllLinks() {
-      this.visibleLinks = this.links;
+        this.visibleLinks = this.links;
     }
 
     //Display only the backbone Links
     retractAllLinks() {
-      this.visibleLinks = this.links.filter(l => l.isBackbone);
+        this.visibleLinks = this.links.filter(l => l.isBackbone);
     }
 
     //Returns all link objects
@@ -54,40 +57,38 @@ class LinkService {
     }
 
     //Add visible links to stack
-    addVisibleLinks(key, n=0) {
+    addVisibleLinks(key, n = 0) {
         if (n > 0) {
             const linksToAdd = this.links.filter(l =>
                 l.from === key && l.type === "destination"
             ).forEach(l => {
-                this.addVisibleLinks(l.to,n=1)
+                this.addVisibleLinks(l.to, n = 1)
             });
             this.visibleLinks.push(...this.links.filter(l => l.from === key && l.type === "destination"));
-        }
-        else {
+        } else {
             const linksToAdd = this.links.filter(l =>
                 l.from === key && l.type === "utility"
             ).forEach(l => {
-                this.addVisibleLinks(l.to,n=1)
+                this.addVisibleLinks(l.to, n = 1)
             });
             this.visibleLinks.push(...this.links.filter(l => l.from === key && l.type === "utility"));
         }
     }
 
     //Removes visible links
-    removeVisibleLinks(key, n=0) {
-        if (n > 0){
+    removeVisibleLinks(key, n = 0) {
+        if (n > 0) {
             this.visibleLinks.filter(l =>
                 l.from === key
             ).forEach(l => {
-                this.removeVisibleLinks(l.to, n=1)
+                this.removeVisibleLinks(l.to, n = 1)
             });
             this.visibleLinks = this.visibleLinks.filter(l => l.from !== key);
-        }
-        else {
+        } else {
             this.visibleLinks.filter(l =>
                 l.from === key && l.type === "utility"
             ).forEach(l => {
-                this.removeVisibleLinks(l.to, n=1)
+                this.removeVisibleLinks(l.to, n = 1)
             });
             this.visibleLinks = this.visibleLinks.filter(l => l.from !== key || l.type === "destination");
         }
@@ -123,6 +124,13 @@ class LinkService {
         return (this.visibleLinks.filter(l => l.from === key && l.type === "utility").length > 0);
     }
 
+    //Gets and sets a link's linkNumber. Called from within BlockService
+    setLinkNumber(from, to, number) {
+        if (this.getLink(from, to) !== null && this.getLink(from, to) !== "undefined") {
+            this.getLink(from, to).linkNumber = number;
+        }
+    }
 }
 
+//Export the linkService Singleton
 export const linkService = new LinkService();

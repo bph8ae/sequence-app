@@ -1,36 +1,35 @@
 import * as go from 'gojs';
-
 import {
-	blockService
+    blockService
 } from "./blockService";
 import {
-	linkService
+    linkService
 } from "./linkService";
 import {
-	fileService
+    fileService
 } from "./fileService";
 import {
-	renderDiagram as render
+    renderDiagram as render
 } from "./index";
 
 /*
 This class contains export functions with ability to manipulate nodes using + and - buttons
 */
 
-//expands node if not expanded yet and retracts node and already expanded
+//Expands node if not expanded yet and retracts node and already expanded
 export function toggleNode(e, obj) {
-	if (typeof obj.part.data !== "undefined") {
-		const {
-			key
-		} = obj.part.data;
-		if (isNodeExpanded(key)) {
-			retractNode(key);
-			// scrollToBlock(key);
-		} else {
-			expandNode(key);
-			// scrollToBlock(key);
-		}
-	}
+    if (typeof obj.part.data !== "undefined") {
+        const {
+            key
+        } = obj.part.data;
+        if (isNodeExpanded(key)) {
+            retractNode(key);
+            // scrollToBlock(key);
+        } else {
+            expandNode(key);
+            // scrollToBlock(key);
+        }
+    }
 }
 
 //Uses GoJS to scroll to y location of expanded or retracted block
@@ -39,46 +38,46 @@ export function toggleNode(e, obj) {
 // 	go.Diagram.scroll('pixel','down',blockY);
 // }
 
-//checks if node is expanded based on visible children and returns true if expanded
+//Checks if node is expanded based on visible children and returns true if expanded
 export function isNodeExpanded(key) {
-	return (blockService.hasVisibleChildren(key) || linkService.hasVisibleChildren(key));
+    return (blockService.hasVisibleChildren(key) || linkService.hasVisibleChildren(key));
 }
 
-//returns true if building block has any children
+//Returns true if building block has any children
 export function doesNodeHaveChildren(key) {
-	return (blockService.hasChildren(key) || linkService.hasChildren(key));
+    return (blockService.hasChildren(key) || linkService.hasChildren(key));
 }
 
-//expands node by adding visible blocks and links and recalculating locations
+//Expands node by adding visible blocks and links and recalculating locations
 export function expandNode(key) {
-	if (doesNodeHaveChildren(key)) {
-		blockService.addVisibleBlocks(key);
-		linkService.addVisibleLinks(key);
-		blockService.calcLocation(150, 0, 0);
-		render();
-	}
+    if (doesNodeHaveChildren(key)) {
+        blockService.addVisibleBlocks(key);
+        linkService.addVisibleLinks(key);
+        blockService.calcLocation(150, 0, 0);
+        render();
+    }
 }
 
-//retracts node by removing visible blocks and links connected to selected building block
+//Retracts node by removing visible nodes and links connected to selected node
 export function retractNode(key) {
-	blockService.removeVisibleBlocks(key);
-	linkService.removeVisibleLinks(key);
-	blockService.calcLocation(150, 0, 0);
-	render();
+    blockService.removeVisibleBlocks(key);
+    linkService.removeVisibleLinks(key);
+    blockService.calcLocation(150, 0, 0);
+    render();
 }
 
-//expands all blocks by setting visibleBlocks and visibleLinks to Blocks and Links
+//Expands all blocks by setting visibleBlocks and visibleLinks to Blocks and Links
 export function expandAllNodes() {
-	blockService.expandAllBlocks();
-	linkService.expandAllLinks();
-	blockService.calcLocation(150,0,0);
-	render();
+    blockService.expandAllBlocks();
+    linkService.expandAllLinks();
+    blockService.calcLocation(150, 0, 0);
+    render();
 }
 
-//retracts all blocks by filtering visibleBlocks and visibleLinks
+//Retracts all blocks by filtering visibleBlocks and visibleLinks to only display the backbone
 export function retractAllNodes() {
-	blockService.retractAllBlocks();
-	linkService.retractAllLinks();
-	blockService.calcLocation(150, 0, 0);
-	render();
+    blockService.retractAllBlocks();
+    linkService.retractAllLinks();
+    blockService.calcLocation(150, 0, 0);
+    render();
 }

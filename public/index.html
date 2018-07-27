@@ -30,14 +30,14 @@
                 </li>
                 <li class="nav-item" style="margin-right: 15px; margin-left: 15px;">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="JSONfileDiv" name="file" single onchange="checkJSONextension()" />
-                        <label class="nav-item custom-file-label" for="JSONfileDiv"> Scenario JSON</label>
+                        <input type="file" class="custom-file-input" id="JSONFileDiv" name="file" single onchange="checkJSONextension()" />
+                        <label class="nav-item custom-file-label" for="JSONFileDiv"> Scenario JSON</label>
                     </div>
                 </li>
                 <li class="nav-item" style="margin-right: 15px; margin-left: 15px;">
                     <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="ExcelfileDiv" name="file" single onchange="checkXLSXextension()" />
-                        <label class="nav-item custom-file-label" for="ExcelfileDiv">Block Information</label>
+                        <input type="file" class="custom-file-input" id="excelFileDiv" name="file" single onchange="checkXLSXextension()" />
+                        <label class="nav-item custom-file-label" for="excelFileDiv">Block Information</label>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -53,35 +53,31 @@
         </div>
     </nav>
     <!-- Go.JS Diagram Div -->
-    <div id="myDiagramDiv" style="border: solid 1px blue; width:100%; height:100vh"></div>
+    <div id="myDiagramDiv" style="border: solid 1px blue; width:100%; height:91vh"></div>
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
     <script>
         function checkJSONextension() {
-            var file = document.querySelector("#JSONfileDiv");
+            var file = document.querySelector("#JSONFileDiv");
             if (/\.(json|txt)$/i.test(file.files[0].name) === false) {
                 alert("Please select a json formatted file (.json or .txt)!");
             }
         }
-    </script>
-    <script>
         function checkXLSXextension() {
-            var file = document.querySelector("#ExcelfileDiv");
+            var file = document.querySelector("#excelFileDiv");
             if (/\.(xlsx|xls)$/i.test(file.files[0].name) === false) {
                 alert("Please select an xlsx or xls file!");
             }
         }
-    </script>
-    <script>
-        $('#JSONfileDiv').on('change', function(e) {
+        $('#JSONFileDiv').on('change', function(e) {
             //get the file name
             var fileName = e.target.files[0].name;
             //replace the "Choose a file" label
             $(this).next('.custom-file-label').html(fileName);
         })
-        $('#ExcelfileDiv').on('change', function(e) {
+        $('#excelFileDiv').on('change', function(e) {
             //get the file name
             var fileName = e.target.files[0].name;
             //replace the "Choose a file" label
