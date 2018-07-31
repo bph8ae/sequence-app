@@ -42,7 +42,7 @@ class BlockService {
         } catch (error) {
             alert('Improperly formatted JSON');
         }
-        this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
+        this.retractAllBlocks();
     }
 
     //Display all blocks

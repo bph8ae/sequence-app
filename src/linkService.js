@@ -18,7 +18,7 @@ class LinkService {
     //Creates links using blockService function and filters to only show visible links in backbone
     createLinks() {
         blockService.parseBlocksToCreateLinks();
-        this.visibleLinks = this.links.filter(l => l.isBackbone);
+        this.retractAllLinks();
     }
 
     //Display all Links
@@ -56,7 +56,7 @@ class LinkService {
         this.links.push(links);
     }
 
-    //Add visible links to stack
+    //Add Visible Links to stack
     addVisibleLinks(key, n = 0) {
         if (n > 0) {
             const linksToAdd = this.links.filter(l =>
@@ -75,7 +75,7 @@ class LinkService {
         }
     }
 
-    //Removes visible links
+    //Removes Visible Links
     removeVisibleLinks(key, n = 0) {
         if (n > 0) {
             this.visibleLinks.filter(l =>
@@ -94,33 +94,23 @@ class LinkService {
         }
     }
 
-    //Returns true if link is of type destination
+    //Returns true if block has link(s) of type destination
     hasDestination(key) {
         return (this.links.filter(l => l.from === key && l.type === "destination").length > 0);
     }
 
-    //Returns true if visibleLink of type destination
+    //Returns true if block has visibleLink(s) of type destination
     hasVisibleDestination(key) {
         return (this.visibleLinks.filter(l => l.from === key && l.type === "destination").length > 0);
     }
 
-    //Returns true if link is of type utility
+    //Returns true if block has link(s) of type utility
     hasUtilities(key) {
         return (this.links.filter(l => l.from === key && l.type === "utility").length > 0);
     }
 
-    //Returns true if visibleLink of type utility
-    hasUtilities(key) {
-        return (this.visibleLinks.filter(l => l.from === key && l.type === "utility").length > 0);
-    }
-
-    //Returns true if block has utility links
-    hasChildren(key) {
-        return (this.links.filter(l => l.from === key && l.type === "utility").length > 0);
-    }
-
-    //Returns true if block has visible utility links
-    hasVisibleChildren(key) {
+    //Returns true if block has visibleLink(s) of type utility
+    hasVisibleUtilities(key) {
         return (this.visibleLinks.filter(l => l.from === key && l.type === "utility").length > 0);
     }
 

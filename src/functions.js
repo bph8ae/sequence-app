@@ -40,12 +40,12 @@ export function toggleNode(e, obj) {
 
 //Checks if node is expanded based on visible children and returns true if expanded
 export function isNodeExpanded(key) {
-    return (blockService.hasVisibleChildren(key) || linkService.hasVisibleChildren(key));
+    return (blockService.hasVisibleChildren(key) || linkService.hasVisibleUtilities(key));
 }
 
 //Returns true if building block has any children
 export function doesNodeHaveChildren(key) {
-    return (blockService.hasChildren(key) || linkService.hasChildren(key));
+    return (blockService.hasChildren(key) || linkService.hasUtilities(key));
 }
 
 //Expands node by adding visible blocks and links and recalculating locations

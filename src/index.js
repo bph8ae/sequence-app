@@ -335,11 +335,21 @@ diagram.add(
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
+        $(go.TextBlock, "#", {
+            position: new go.Point(8, 125),
+            font: "bold 8pt sans-serif",
+            stroke: "black",
+        }),
         $(go.Shape, "TriangleDown", {
             position: new go.Point(7, 170),
             fill: "gray",
             stroke: "black",
             desiredSize: new go.Size(6, 6)
+        }),
+        $(go.TextBlock, "#", {
+            position: new go.Point(13, 157),
+            font: "bold 8pt sans-serif",
+            stroke: "black",
         }),
         $(go.TextBlock, "Destination Link", {
             position: new go.Point(35, 159),

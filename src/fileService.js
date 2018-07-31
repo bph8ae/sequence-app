@@ -100,7 +100,7 @@ class FileService {
     // 	// fileReader.readAsArrayBuffer(file);
     // }
 
-    //handles JSON input file to create blocks and links
+    //Reads JSON input file to create blocks and links
     jsonRead(input) {
         const file = input.target.files[0];
 		//input.t.next('.custom-file-label').html(file);
