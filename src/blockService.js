@@ -1,3 +1,9 @@
+/*
+This class adds functionality to building block objects. It includes methods for
+creating building block objects, setting their location automatically, and
+returning pertinent data about the blocks and the block object itself
+*/
+
 import {
     linkService
 } from "./linkService";
@@ -9,11 +15,7 @@ import {
 } from "./block.js";
 import "./functions.js";
 
-/*
-This class adds functionality to building block objects. It includes methods for
-creating building block objects, setting their location automatically, and
-returning pertinent data about the blocks and the block object itself
-*/
+
 
 //Block Data Functionality
 class BlockService {
@@ -39,23 +41,24 @@ class BlockService {
         data = data.replace(/[\u0000-\u0019]+/g, "");
         try {
             this.blocks = JSON.parse(data);
+            this.retractAllBlocks();
         } catch (error) {
-            alert('Improperly formatted JSON');
+            alert('Improperly formatted JSON. Please select a different file.');
         }
-        this.retractAllBlocks();
     }
 
-    //Display all blocks
+    //Set this.visibleBlocks = this.blocks in order to display all Blocks
+    //NOTE: Need to resolve this function as it breaks the program
     expandAllBlocks() {
         this.visibleBlocks = this.blocks;
     }
 
-    //Display only the backbone blocks
+    //Reset this.visibleBlocks to display only the Backbone Blocks
     retractAllBlocks() {
         this.visibleBlocks = this.blocks.filter(b => b.parent === 0);
     }
 
-    //Calculates the location of each visible block in space
+    //Calculates the location of each visible block in pixel space
     calcLocation(distance, x, y) {
         var maxArr = [];
         //loop through all visible blocks
@@ -75,42 +78,42 @@ class BlockService {
         })
     }
 
-    //returns true if the block is a destination block
+    //Returns true if the block is a destination block
     isDestination(key) {
         return this.getBlock(key).parent !== this.getBlock(key).prior;
     }
 
-    //return all building block objects
+    //Return this.blocks to return all Block Objects
     getBlocks() {
         return this.blocks;
     }
 
-    //returns building block corresponding to passed key identifier
+    //Returns a select block corresponding to input parameter: key
     getBlock(key) {
         return this.blocks.find(b => b.key === key);
     }
 
-    //returns root block of sequence trace
+    //Returns the root block of the sequence trace
     getRoot() {
         return this.blocks.find(b => b.isRoot === true);
     }
 
-    //returns all rendered visible block objects
+    //returns this.visibleBlocks to return all rendered visible block objects
     getVisibleBlocks() {
         return this.visibleBlocks;
     }
 
-    //returns visible block corresponding to key identifier
+    //Returns a select visible block corresponding to input parameter: key
     getVisibleBlock(key) {
         return this.visibleBlocks.find(b => b.key === key);
     }
 
-    //pushes block with corresponding key onto visible block stack
+    //Pushes block with corresponding key onto this.visibleBlocks
     addVisibleBlocks(key) {
         this.visibleBlocks.push(...this.blocks.filter(b => b.parent === key));
     }
 
-    //removes block with corresponding key from visible block stack
+    //Removes block with corresponding key from this.visibleBlocks
     removeVisibleBlocks(key) {
         const blocksToRemove = this.visibleBlocks.filter(b => b.parent === key);
         if (blocksToRemove.length > 0) {
@@ -119,22 +122,22 @@ class BlockService {
         this.visibleBlocks = this.visibleBlocks.filter(b => b.parent !== key);
     }
 
-    //returns true if building block has any destinations or utilities
+    //Returns true if building block has any destinations or utilities
     hasChildren(key) {
         return (this.blocks.filter(b => b.parent === key).length > 0);
     }
 
-    //returns true if building block has any visible destinations or utilities
+    //Returns true if building block has any visible destinations or utilities
     hasVisibleChildren(key) {
         return (this.visibleBlocks.filter(b => b.parent === key).length > 0);
     }
 
-    //returns utility block objects of current building block that are visible
+    //Returns all utility block objects of block with corresponding key
     getVisibleUtilities(key) {
         return this.visibleBlocks.filter(b => b.parent === key && b.prior == key);
     }
 
-    //returns true if building block is part of sequence backbaone
+    //Returns true if building block is part of sequence backbone
     isBackbone(key) {
         // check if block has a destination
         if (this.hasDestination(key)) {
@@ -151,7 +154,7 @@ class BlockService {
         }
     }
 
-    //returns true if building block has a destination
+    //Returns true if building block has a destination
     hasDestination(key) {
         if (this.getBlock(key).destination !== null && this.getBlock(key).destination !== "") {
             return true;
@@ -159,7 +162,7 @@ class BlockService {
         return false;
     }
 
-    //returns true if visible building block has a visible destination
+    //Returns true if visible building block has a visible destination
     hasVisibleDestination(key) {
         var currentBlock = this.getVisibleBlock(key);
         if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
@@ -171,7 +174,7 @@ class BlockService {
         return false;
     }
 
-    //returns true if building block has any utilities
+    //Returns true if building block has any utilities
     hasUtilities(key) {
         if (this.getBlock(key).utilities !== [] && this.getBlock(key).utilities !== null) {
             return true;
@@ -179,7 +182,7 @@ class BlockService {
         return false;
     }
 
-    //returns true if visible building block has visible utilities
+    //Returns true if visible building block has visible utilities
     hasVisibleUtilities(key) {
         var currentBlock = this.getVisibleBlock(key);
         if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
@@ -191,8 +194,8 @@ class BlockService {
         return false;
     }
 
-    //recursive function to calculate horizontal depth of a block based its position
-    //relative to the backbone key (0)
+    //Recursive function to calculate horizontal depth of a block based its position
+    //Relative to the backbone key (0)
     calculateHorizontalDepth(key) {
         var currentBlock = this.getBlock(key);
         //check if valid object
@@ -266,8 +269,9 @@ class BlockService {
                         linkService.setLinkNumber(key, utilities[i].key, linkCount)
                         this.setVisibleVerticalDepths(utilities[i].key, newLayer, ++linkCount);
                     }
-                    utilityDepth += this.calculateVisibleVerticalDepth(utilities[i].key);
-                    linkCount += this.calculateVisibleVerticalDepth(utilities[i].key);
+                    var incrementalDepth = this.calculateVisibleVerticalDepth(utilities[i].key);
+                    utilityDepth += incrementalDepth;
+                    linkCount += incrementalDepth;
                 }
             }
             if (this.hasVisibleDestination(key)) {

@@ -1,10 +1,10 @@
-import {
-    blockService
-} from "./blockService";
-
 /*
 This class provides functionality around link creation and manipulation
 */
+
+import {
+    blockService
+} from "./blockService";
 
 //Link Data Functionality
 class LinkService {

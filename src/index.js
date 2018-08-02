@@ -1,5 +1,8 @@
-import * as go from 'gojs';
+/*
+This class sets up the user interface and graphical design using GoJS library
+*/
 
+import * as go from 'gojs';
 import './index.css';
 import {
     expandNode,
@@ -19,10 +22,6 @@ import {
 import {
     linkService
 } from "./linkService";
-
-/*
-This class sets up the user interface and graphical design using GoJS library
-*/
 
 //Sets up actions for file input browsers, and buttons in html file to read in files and expand and retract all nodes
 document.getElementById('JSONFileDiv').addEventListener('change', fileService.jsonRead, false);

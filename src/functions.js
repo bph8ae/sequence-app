@@ -1,4 +1,9 @@
+/*
+This class contains export functions with ability to manipulate nodes using + and - buttons
+*/
+
 import * as go from 'gojs';
+import * as $ from 'jquery';
 import {
     blockService
 } from "./blockService";
@@ -12,9 +17,8 @@ import {
     renderDiagram as render
 } from "./index";
 
-/*
-This class contains export functions with ability to manipulate nodes using + and - buttons
-*/
+var scrollBarYPosition = 0;
+
 
 //Expands node if not expanded yet and retracts node and already expanded
 export function toggleNode(e, obj) {
@@ -24,19 +28,26 @@ export function toggleNode(e, obj) {
         } = obj.part.data;
         if (isNodeExpanded(key)) {
             retractNode(key);
-            // scrollToBlock(key);
         } else {
+            var d = $("#myDiagramDiv").scrollTop();
+            console.log(d);
+            console.log(document.getElementById("myDiagramDiv"));
+            console.log("Offset Top: "+document.getElementById("myDiagramDiv").offsetTop);
+            console.log("Scroll Top: "+document.getElementById("myDiagramDiv").scrollTop);
+            console.log("Scroll Y: "+document.getElementById("myDiagramDiv").scrollY);
+
             expandNode(key);
-            // scrollToBlock(key);
+            //scrollToBlock(scrollBarYPosition);
         }
     }
 }
 
-//Uses GoJS to scroll to y location of expanded or retracted block
-// function scrollToBlock(key) {
-// 	var blockY = blockService.getBlock(key).y * 150;
-// 	go.Diagram.scroll('pixel','down',blockY);
-// }
+//Uses jQuery to save and reset the Vertical Scroll Position
+function scrollToBlock(y) {
+ 	document.getElementById("myDiagramDiv").scrollTop = y;
+    $('#myDiagramDiv').scrollTop(y);
+    //document.getElementById("myDiagramDiv").scrollTop(y);
+}
 
 //Checks if node is expanded based on visible children and returns true if expanded
 export function isNodeExpanded(key) {
