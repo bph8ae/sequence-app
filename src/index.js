@@ -1,9 +1,9 @@
 /*
 This class sets up the user interface and graphical design using GoJS library
 */
-
-import * as go from 'gojs';
+import "bootstrap/dist/css/bootstrap.min.css";
 import './index.css';
+import * as go from 'gojs';
 import {
     expandNode,
     retractNode,
@@ -11,7 +11,7 @@ import {
     isNodeExpanded,
     doesNodeHaveChildren,
     expandAllNodes,
-    retractAllNodes
+    retractAllNodes,
 } from "./functions";
 import {
     fileService
@@ -189,8 +189,12 @@ diagram.nodeTemplate =
             },
             //Change color of building block based on type
             new go.Binding("fill", "builtByScenario", function(builtByScenario) {
-                if (builtByScenario === 'TS_S001' || builtByScenario === 'BS_S001' || builtByScenario === 'BS_S002' || builtByScenario === 'BS_S003') {
-                    return 'lightgreen';
+                if (builtByScenario !== "" && typeof builtByScenario !== "undefined") {
+                    if (builtByScenario === "Skip" || builtByScenario === "skip") {
+                        return 'gray';
+                    } else {
+                        return 'lightgreen';
+                    }
                 } else {
                     return 'indianred';
                 }
@@ -296,39 +300,39 @@ diagram.add(
             layerName: "Grid",
             _viewPosition: new go.Point(0, 315)
         },
-        $(go.TextBlock, "Legend", {
+        $(go.TextBlock, "Legend - Hover Over Block for More Details", {
             font: "bold 14pt sans-serif",
             stroke: "black"
         }),
-        $(go.Shape, "Rectangle", {
+        $(go.Shape, "Procedure", {
             position: new go.Point(0, 35),
-            fill: "#FFFFCC",
+            fill: "lightgreen",
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
-        $(go.TextBlock, "Hover Over Blocks for Callout", {
+        $(go.TextBlock, "Covered by a Scenario", {
             position: new go.Point(35, 39),
             font: "bold 8pt sans-serif",
             stroke: "black"
         }),
         $(go.Shape, "Procedure", {
             position: new go.Point(0, 65),
-            fill: "lightgreen",
+            fill: "indianred",
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
-        $(go.TextBlock, "Covered by a Scenario", {
+        $(go.TextBlock, "Not Yet Assigned to a Scenario", {
             position: new go.Point(35, 69),
             font: "bold 8pt sans-serif",
             stroke: "black"
         }),
         $(go.Shape, "Procedure", {
             position: new go.Point(0, 95),
-            fill: "indianred",
+            fill: "gray",
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
-        $(go.TextBlock, "Not Assigned to a Scenario", {
+        $(go.TextBlock, "Skipped (by all Scenarios)", {
             position: new go.Point(35, 99),
             font: "bold 8pt sans-serif",
             stroke: "black"
@@ -413,7 +417,7 @@ diagram.add(
             desiredSize: new go.Size(16, 16)
         }),
         $(go.Shape, "LineH", {
-            position: new go.Point(5, 223),
+            position: new go.Point(5, 222),
             fill: "lightgray",
             stroke: "black",
             desiredSize: new go.Size(10, 10)
@@ -445,13 +449,13 @@ diagram.undoManager.isEnabled = true;
 //Disable Animations
 diagram.animationManager.isEnabled = false;
 
-export function scrollVertically(y) {
-    console.log("In index.js scrollVertically(y) setting y to :" + y);
-    console.log(diagram);
-    diagram.scroll("pixel", "down", "number": y);
-}
-
 //Renders the entire Diagram - Note that this function is called whenever a node is expanded or retracted
-export function renderDiagram() {
+export function renderDiagram(x, y) {
     diagram.model = new go.GraphLinksModel(blockService.getVisibleBlocks(), linkService.getVisibleLinks());
+    if(typeof x !== "undefined" && typeof y !== "undefined") {
+        setTimeout(() => {
+            const muhRect = new go.Rect(x, y, 1, 1);
+            diagram.scrollToRect(muhRect);
+        }, 50);
+    }
 }

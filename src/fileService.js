@@ -26,6 +26,7 @@ class FileService {
 
     constructor() {
         this.allBlocks;
+        this.setDescriptions = this.setDescriptions.bind(this);
     }
 
     setDescriptions(blocks) {
@@ -41,6 +42,7 @@ class FileService {
         jsonReadSuccessful = false;
         const file = input.target.files[0];
         const fileName = file.name;
+        const setDescriptions = this.setDescriptions;
         $('#JSONFileDiv').next('.custom-file-label').html(fileName);
         if (file === undefined) {
             alert('Please select a file.');

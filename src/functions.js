@@ -14,8 +14,7 @@ import {
     fileService
 } from "./fileService";
 import {
-    renderDiagram as render,
-    scrollVertically
+    renderDiagram as render
 } from "./index";
 
 var scrollBarYPosition = 0;
@@ -44,7 +43,6 @@ function scrollToBlock(y) {
     console.log("In functions.js scrollToBlock(y) setting ScrollTop to: "+y);
     document.getElementById("myDiagramDiv").children[1].scrollTop = y;
     console.log("After setting scrolltop "+document.getElementById("myDiagramDiv").children[1].scrollTop);
-    scrollVertically(y);
 }
 
 //Checks if node is expanded based on visible children and returns true if expanded
@@ -63,7 +61,7 @@ export function expandNode(key) {
         blockService.addVisibleBlocks(key);
         linkService.addVisibleLinks(key);
         blockService.calcLocation(150, 0, 0);
-        render();
+        render(0,blockService.getBlock(key).y*150);
     }
 }
 
@@ -72,7 +70,7 @@ export function retractNode(key) {
     blockService.removeVisibleBlocks(key);
     linkService.removeVisibleLinks(key);
     blockService.calcLocation(150, 0, 0);
-    render();
+    render(0,blockService.getBlock(key).y*150);
 }
 
 //Expands all blocks by setting visibleBlocks and visibleLinks to Blocks and Links

@@ -253,7 +253,7 @@ class BlockService {
         if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
             if (this.hasVisibleUtilities(key)) {
                 var utilities = this.getVisibleUtilities(key);
-                for (var i = 0; i < utilities.length; i++) {
+                for (let i = 0; i < utilities.length; i++) {
                     utilityDepth += this.calculateVisibleVerticalDepth(utilities[i]);
                 }
                 utilityDepth += utilities.length - 1;
