@@ -47,6 +47,23 @@ class BlockService {
         }
     }
 
+    setBlockMetaData(blockDescriptions) {
+        this.blocks.forEach(b => {
+            var matchingBlock = blockDescriptions.find(m => m.csect === b.csect && m.name === b.name);
+            if (matchingBlock !== null && matchingBlock !== "" && typeof(matchingBlock) !== "undefined") {
+                b.description = matchingBlock.description;
+                b.lineRange = matchingBlock.lineRange;
+                b.builtByScenario = matchingBlock.builtByScenario;
+                b.usedByScenario = matchingBlock.usedByScenario;
+                b.buildingBlockGroup = matchingBlock.buildingBlockGroup;
+                b.buildingBlockType = matchingBlock.buildingBlockType;
+                b.totalLines = matchingBlock.totalLines;
+                b.codeLines = matchingBlock.codeLines;
+                b.commentLines = matchingBlock.commentLines;
+            }
+        })
+    }
+
     //Set this.visibleBlocks = this.blocks in order to display all Blocks
     //NOTE: Need to resolve this function as it breaks the program
     expandAllBlocks() {
@@ -65,7 +82,7 @@ class BlockService {
         this.visibleBlocks.forEach(b => {
             x = this.calculateHorizontalDepth(b.key);
             this.getBlock(b.key).x = x;
-        })
+        });
         //Root Key = 1, Root Y Layer = 0, 1st Link Label is 1
         this.setVisibleVerticalDepths(1, 0, 1);
         //Compute actual distance based on x,y coordinates

@@ -14,7 +14,8 @@ import {
     fileService
 } from "./fileService";
 import {
-    renderDiagram as render
+    renderDiagram as render,
+    scrollVertically
 } from "./index";
 
 var scrollBarYPosition = 0;
@@ -29,24 +30,21 @@ export function toggleNode(e, obj) {
         if (isNodeExpanded(key)) {
             retractNode(key);
         } else {
-            var d = $("#myDiagramDiv").scrollTop();
-            console.log(d);
-            console.log(document.getElementById("myDiagramDiv"));
-            console.log("Offset Top: "+document.getElementById("myDiagramDiv").offsetTop);
-            console.log("Scroll Top: "+document.getElementById("myDiagramDiv").scrollTop);
-            console.log("Scroll Y: "+document.getElementById("myDiagramDiv").scrollY);
-
+            var divChild = document.getElementById("myDiagramDiv").children[1];
+            scrollBarYPosition = divChild.scrollTop;
+            console.log(scrollBarYPosition);
             expandNode(key);
-            //scrollToBlock(scrollBarYPosition);
+            scrollToBlock(scrollBarYPosition);
         }
     }
 }
 
 //Uses jQuery to save and reset the Vertical Scroll Position
 function scrollToBlock(y) {
- 	document.getElementById("myDiagramDiv").scrollTop = y;
-    $('#myDiagramDiv').scrollTop(y);
-    //document.getElementById("myDiagramDiv").scrollTop(y);
+    console.log("In functions.js scrollToBlock(y) setting ScrollTop to: "+y);
+    document.getElementById("myDiagramDiv").children[1].scrollTop = y;
+    console.log("After setting scrolltop "+document.getElementById("myDiagramDiv").children[1].scrollTop);
+    scrollVertically(y);
 }
 
 //Checks if node is expanded based on visible children and returns true if expanded

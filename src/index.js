@@ -48,7 +48,7 @@ var commonToolTip =
         $(go.Panel, "Vertical", {
                 margin: 3
             },
-            //Show csect of block
+            //Show Block CSECT
             $(go.TextBlock, //Bound to node data
                 {
                     width: 500,
@@ -60,7 +60,7 @@ var commonToolTip =
                     return "CSECT: " + csect;
                 })
             ),
-            //Show name of block
+            //Show Block Name
             $(go.TextBlock, //Bound to node data
                 {
                     width: 500,
@@ -72,17 +72,41 @@ var commonToolTip =
                     return "Name: " + name + '\n';
                 })
             ),
-            //Show block Description
-            //NOTE: CURRENTLY HARD CODED IN
+            //Show Built By Scenario
             $(go.TextBlock, //Bound to node data
                 {
                     width: 500,
                     margin: 4,
                     font: "bold 12pt sans-serif",
-                    // text: "textAlign: 'center'"
-                    text: "Description: This is a block \n"
+                    text: "textAlign: 'left'"
                 },
-                // new go.Binding("text", "description", function(description) { return "Description: Please work :)" + '\n'; })
+                new go.Binding("text", "builtByScenario", function(builtByScenario) {
+                    return "Built by Scenario: " + builtByScenario;
+                })
+            ),
+            //Show Used By Scenario
+            $(go.TextBlock, //Bound to node data
+                {
+                    width: 500,
+                    margin: 4,
+                    font: "bold 12pt sans-serif",
+                    text: "textAlign: 'left'"
+                },
+                new go.Binding("text", "usedByScenario", function(usedByScenario) {
+                    return "Used by Scenario: " + usedByScenario + '\n';
+                })
+            ),
+            //Show block Description
+            $(go.TextBlock, //Bound to node data
+                {
+                    width: 500,
+                    margin: 4,
+                    font: "bold 12pt sans-serif",
+                    text: "textAlign: 'center'"
+                },
+                new go.Binding("text", "description", function(description) {
+                    return "Description: " + description + '\n';
+                })
             ),
             //Show name of previous block
             $(go.TextBlock, //Bound to node data
@@ -131,16 +155,16 @@ var commonToolTip =
                 })
             ),
             //Show lines of code of current block
-            //NOTE: HARD CODED IN
             $(go.TextBlock, //Bound to node data
                 {
                     width: 500,
                     margin: 4,
                     font: "bold 12pt sans-serif",
-                    // text: "textAlign: 'center'"
-                    text: "Lines of Code: blah blah"
+                    text: "textAlign: 'center'"
                 },
-                // 		new go.Binding("text", "linesOfCode", function(linesOfCode) { return "Lines of Code: " + linesOfCode; })
+                new go.Binding("text", "lineRange", function(lineRange) {
+                    return "Lines of Code: " + lineRange;
+                })
             ),
         )
     );
@@ -158,11 +182,11 @@ diagram.nodeTemplate =
                 height: 100,
             },
             //Change color of building block based on type
-            new go.Binding("fill", "nodeType", function(nodeType) {
-                if (nodeType === 'Utility') {
-                    return '#cce6ff';
-                } else {
+            new go.Binding("fill", "builtByScenario", function(builtByScenario) {
+                if (builtByScenario === 'TS_S001' || builtByScenario === 'BS_S001' || builtByScenario === 'BS_S002' || builtByScenario === 'BS_S003') {
                     return 'lightgreen';
+                } else {
+                    return 'indianred';
                 }
             })
         ),
@@ -283,18 +307,18 @@ diagram.add(
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
-        $(go.TextBlock, "Destination Block", {
+        $(go.TextBlock, "Covered by a Scenario", {
             position: new go.Point(35, 69),
             font: "bold 8pt sans-serif",
             stroke: "black"
         }),
         $(go.Shape, "Procedure", {
             position: new go.Point(0, 95),
-            fill: "#cce6ff",
+            fill: "indianred",
             stroke: "black",
             desiredSize: new go.Size(20, 20)
         }),
-        $(go.TextBlock, "Utility Block", {
+        $(go.TextBlock, "Not Assigned to a Scenario", {
             position: new go.Point(35, 99),
             font: "bold 8pt sans-serif",
             stroke: "black"
@@ -410,6 +434,12 @@ diagram.initialContentAlignment = go.Spot.Center;
 diagram.undoManager.isEnabled = true;
 //Disable Animations
 diagram.animationManager.isEnabled = false;
+
+export function scrollVertically(y) {
+    console.log("In index.js scrollVertically(y) setting y to :" + y);
+    console.log(diagram);
+    diagram.scroll("pixel", "down", "number":y);
+}
 
 //Renders the entire Diagram - Note that this function is called whenever a node is expanded or retracted
 export function renderDiagram() {

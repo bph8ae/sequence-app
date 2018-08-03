@@ -17,18 +17,28 @@ import {
 } from "./linkService";
 import * as XLSX from 'xlsx';
 
-var excelURL = "ITPE Scenario Decision Tracker.xlsm";
+var rABS = true; // true: readAsBinaryString ; false: readAsArrayBuffer
+var fileBlocks = [];
+var jsonReadSuccessful = false;
+var excelReadSuccessful = false;
 
 class FileService {
 
     constructor() {
-        this.JSONData = [];
-        this.excelData = [];
-        this.allBlocks = [];
+        this.allBlocks;
+    }
+
+    setDescriptions(blocks) {
+        if (jsonReadSuccessful && excelReadSuccessful) {
+            blockService.setBlockMetaData(blocks);
+            return true;
+        }
+        return false;
     }
 
     //Reads JSON input file to create blocks and links
     jsonRead(input) {
+        jsonReadSuccessful = false;
         const file = input.target.files[0];
         const fileName = file.name;
         $('#JSONFileDiv').next('.custom-file-label').html(fileName);
@@ -53,8 +63,16 @@ class FileService {
                             linkService.createLinks();
                             //set locations of blocks using parameters (distance between blocks (pixels),x,y)
                             blockService.calcLocation(150, 0, 0);
+
+                            jsonReadSuccessful = true;
+                            //this.setDescriptions(fileBlocks);
+                            if (jsonReadSuccessful && excelReadSuccessful) {
+                                blockService.setBlockMetaData(fileBlocks);
+                            }
+                            
                             //render diagram
                             render();
+
                         }
                     });
                 }
@@ -69,36 +87,53 @@ class FileService {
         }
     }
 
+    //Helper method for excelRead
+    fixdata(data) {
+        var o = "",
+            l = 0,
+            w = 10240;
+        for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+        o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+        return o;
+    }
+
+    //Reads excel block descriptions to link with blockService
     excelRead(input) {
-        console.log("In Excel Read");
+        excelReadSuccessful = false;
         const file = input.target.files[0];
         const fileName = file.name;
         $('#excelFileDiv').next('.custom-file-label').html(fileName);
         if (file === undefined) {
             alert('Please select a file.');
             return;
-        } else if (/\.(xlsm|xlsx|xls)$/i.test(fileName) === false) {
-            alert("Please select an .xlsx .xlsm or .xls file!");
+        } else if (/\.(xls|xlsx|xlsm)$/i.test(fileName) === false) {
+            alert("Please select a valid excel formatted file (.xls or .xlsx or .xlsm)!");
             return;
         } else {
             try {
-                var req = new XMLHttpRequest();
-                //req.open("GET", file, true);
-                req.open("GET", excelURL, true);
-                console.log(file);
-                req.responseType = "arraybuffer";
-                req.onload = function(input) {
-                    console.log("In Onload");
-                    //Convert data to binary string
-                    var data = new Uint8Array(req.response);
-                    var workbook = XLSX.read(data, {
-                        type: "array"
-                    });
+                fileBlocks = [];
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var data = event.target.result;
+                    var workbook;
+                    if (rABS) {
+                        /* if binary string, read with type 'binary' */
+                        workbook = XLSX.read(data, {
+                            type: 'binary'
+                        });
+                    } else {
+                        /* if array buffer, convert to base64 */
+                        var arr = this.fixdata(data);
+                        workbook = XLSX.read(btoa(arr), {
+                            type: 'base64'
+                        });
+                    }
+                    /* DO SOMETHING WITH workbook HERE */
                     //Process Workbook Data
                     var sheet_name_list = workbook.SheetNames;
                     sheet_name_list.forEach(
                         function(y) {
-                            var worksheet = workbook.Sheets(y);
+                            var worksheet = workbook.Sheets[y];
                             var csect;
                             var name;
                             var description;
@@ -112,6 +147,7 @@ class FileService {
                             var codeLines;
                             var commentLines;
                             var z;
+                            var i = 0;
                             for (z in worksheet) {
                                 //All keys that do not begin with "!" correspond to cell addresses
                                 if (z[0] === '!') continue;
@@ -160,23 +196,43 @@ class FileService {
                                             "usedByScenario": usedByScenario,
                                             "lineRange": lineRange,
                                             "run": run,
-                                            "group": group,
-                                            "type": type,
+                                            "buildingBlockGroup": group,
+                                            "buildingBlockType": type,
                                             "totalLines": totalLines,
                                             "codeLines": codeLines,
                                             "commentLines": commentLines,
                                         }
-                                        console.log(block);
-                                        this.allBlocks.push(block);
+                                        //Skip Header Row
+                                        if (i === 0) {
+                                            i++;
+                                        } else {
+                                            console.log(block);
+                                            fileBlocks.push(block);
+                                        }
+                                        csect = "";
+                                        name = "";
+                                        description = "";
+                                        builtByScenario = "";
+                                        usedByScenario = "";
+                                        lineRange = "";
+                                        run = "";
+                                        group = "";
+                                        type = "";
+                                        totalLines = "";
+                                        codeLines = "";
+                                        commentLines = "";
                                         break;
                                 }
                             }
+                            excelReadSuccessful = true;
+                            //this.setDescriptions(fileBlocks);
+                            if (jsonReadSuccessful && excelReadSuccessful) {
+                                blockService.setBlockMetaData(fileBlocks);
+                            }
                         }
                     );
-                }
-                console.log("After OnLoad");
-                req.send();
-                console.log(this.allBlocks);
+                };
+                reader.readAsBinaryString(file);
             } catch (error) {
                 console.log(error);
             }
