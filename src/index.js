@@ -197,10 +197,21 @@ diagram.nodeTemplate =
             })
         ),
         $(go.Panel, "Vertical",
+            //Display Key for Testing purposes
+            // $(go.TextBlock, {
+            //         margin: 3
+            //     }, // some room around the text
+            //     new go.Binding("text", "key", (key) => "key:" + key)
+            // ),
             $(go.TextBlock, {
-                    margin: 3
+                    margin: 3,
+                    font: "9pt sans-serif",
+                    width: 80,
+                    wrap: go.TextBlock.WrapFit
                 }, // some room around the text
-                new go.Binding("text", "key", (key) => "key:" + key)
+                new go.Binding("text", "csect", function(csect) {
+                    return csect;
+                }),
             ),
             $(go.TextBlock, {
                     margin: 3,
@@ -210,35 +221,28 @@ diagram.nodeTemplate =
                 }, // some room around the text
                 new go.Binding("text", "name")
             ),
-            //Uncomment for testing purposes
+            //Display Parent for Testing purposes
             // $(go.TextBlock,
             // 	{ margin: 3 },  // some room around the text
             // 	// bind TextBlock.text to Node.data.key
             // 	new go.Binding("text", "parent", (parent) => "parent:"+parent)
             // ),
-            $(go.TextBlock, {
-                margin: 4,
-                editable: true,
-                text: "Add Note: "
-            }),
-            //Feature - Remove Button if no children
         ),
         $("Button", {
                 margin: 2,
                 click: toggleNode,
                 alignment: go.Spot.Bottom,
-                visible: true
             },
+            new go.Binding("visible", "key", function(key) {
+                return doesNodeHaveChildren(key);
+            }),
             $(go.TextBlock,
                 new go.Binding("text", "key", function(key) {
-                    if (doesNodeHaveChildren(key)) {
-                        if (isNodeExpanded(key)) {
-                            return "–";
-                        } else {
-                            return "+";
-                        }
+                    if (isNodeExpanded(key)) {
+                        return "–";
+                    } else {
+                        return "+";
                     }
-                    return "";
                 }),
             )
         )
@@ -444,7 +448,7 @@ diagram.animationManager.isEnabled = false;
 export function scrollVertically(y) {
     console.log("In index.js scrollVertically(y) setting y to :" + y);
     console.log(diagram);
-    diagram.scroll("pixel", "down", "number":y);
+    diagram.scroll("pixel", "down", "number": y);
 }
 
 //Renders the entire Diagram - Note that this function is called whenever a node is expanded or retracted
