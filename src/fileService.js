@@ -69,7 +69,7 @@ class FileService {
                             if (jsonReadSuccessful && excelReadSuccessful) {
                                 blockService.setBlockMetaData(fileBlocks);
                             }
-                            
+
                             //render diagram
                             render();
 
@@ -206,7 +206,6 @@ class FileService {
                                         if (i === 0) {
                                             i++;
                                         } else {
-                                            console.log(block);
                                             fileBlocks.push(block);
                                         }
                                         csect = "";

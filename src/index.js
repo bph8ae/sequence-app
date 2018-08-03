@@ -133,11 +133,14 @@ var commonToolTip =
                     text: "textAlign: 'center'"
                 },
                 new go.Binding("text", "utilities", function(utilities) {
-                    var utils = blockService.getBlock(utilities[0]).name;
-                    var utilSlice = utilities.slice(1, utilities.length);
-                    utilSlice.forEach(u => {
-                        utils = utils + ", " + blockService.getBlock(u).name;
-                    })
+                    var utils = "";
+                    if (utilities.length > 0) {
+                        utils = blockService.getBlock(utilities[0]).name;
+                        var utilSlice = utilities.slice(1, utilities.length);
+                        utilSlice.forEach(u => {
+                            utils = utils + ", " + blockService.getBlock(u).name;
+                        });
+                    }
                     return "Utilities: " + utils;
                 })
             ),
@@ -150,8 +153,11 @@ var commonToolTip =
                     text: "textAlign: 'center'"
                 },
                 new go.Binding("text", "destination", function(destination) {
-                    return "Destination: " +
-                        blockService.getBlock(destination).name + '\n';
+                    if (destination !== "") {
+                        return "Destination: " + blockService.getBlock(destination).name + '\n';
+                    } else {
+                        return "Destination: " + '\n';
+                    }
                 })
             ),
             //Show lines of code of current block
