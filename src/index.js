@@ -189,8 +189,10 @@ diagram.nodeTemplate =
             },
             //Change color of building block based on type
             new go.Binding("fill", "builtByScenario", function(builtByScenario) {
-                if (builtByScenario !== "" && typeof builtByScenario !== "undefined") {
-                    if (builtByScenario === "Skip" || builtByScenario === "skip") {
+                if (typeof builtByScenario !== "undefined") {
+                    if (builtByScenario === "") {
+                        return 'indianred';
+                    } else if (builtByScenario === "Skip" || builtByScenario === "skip") {
                         return 'gray';
                     } else {
                         return 'lightgreen';
