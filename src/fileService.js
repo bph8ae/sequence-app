@@ -5,7 +5,7 @@ read in .xlsx files from SharePoint URL using XLSX SheetJS library for automated
 description and lines of code updating
 */
 
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {
     renderDiagram as render
 } from "./index";
@@ -21,6 +21,9 @@ var rABS = true; // true: readAsBinaryString ; false: readAsArrayBuffer
 var fileBlocks = [];
 var jsonReadSuccessful = false;
 var excelReadSuccessful = false;
+
+console.log("lommy")
+console.log($);
 
 class FileService {
 

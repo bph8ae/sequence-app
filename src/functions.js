@@ -3,7 +3,7 @@ This class contains export functions with ability to manipulate nodes using + an
 */
 
 import * as go from 'gojs';
-import * as $ from 'jquery';
+import $ from 'jquery';
 import {
     blockService
 } from "./blockService";
