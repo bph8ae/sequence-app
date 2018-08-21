@@ -254,12 +254,11 @@ class BlockService {
             if (this.hasVisibleUtilities(key)) {
                 var utilities = this.getVisibleUtilities(key);
                 for (let i = 0; i < utilities.length; i++) {
-                    utilityDepth += this.calculateVisibleVerticalDepth(utilities[i]);
+                    utilityDepth += this.calculateVisibleVerticalDepth(utilities[i].key);
                 }
-                utilityDepth += utilities.length - 1;
+                utilityDepth += utilities.length;
             }
         }
-        //console.log("Key: "+key+" Utility Depth " + utilityDepth);
         return utilityDepth;
     }
 
@@ -273,19 +272,13 @@ class BlockService {
         if (currentBlock !== null && currentBlock !== "" && typeof(currentBlock) !== "undefined") {
             this.getVisibleBlock(key).y = layer;
             var utilityDepth = 0;
-            var utilityLength = 0;
+            var utilityCount = 0;
             if (this.hasVisibleUtilities(key)) {
                 var utilities = this.getVisibleUtilities(key);
-                utilityLength = utilities.length - 1;
-                for (var i = 0; i <= utilityLength; i++) {
-                    if (i === 0) {
-                        linkService.setLinkNumber(key, utilities[i].key, linkCount)
-                        this.setVisibleVerticalDepths(utilities[i].key, layer, ++linkCount);
-                    } else {
-                        var newLayer = layer + i + utilityDepth;
-                        linkService.setLinkNumber(key, utilities[i].key, linkCount)
-                        this.setVisibleVerticalDepths(utilities[i].key, newLayer, ++linkCount);
-                    }
+                utilityCount = utilities.length;
+                for (var i = 0; i < utilityCount; i++) {
+                    linkService.setLinkNumber(key, utilities[i].key, linkCount)
+                    this.setVisibleVerticalDepths(utilities[i].key, layer+i+utilityDepth+1, ++linkCount);
                     var incrementalDepth = this.calculateVisibleVerticalDepth(utilities[i].key);
                     utilityDepth += incrementalDepth;
                     linkCount += incrementalDepth;
@@ -294,7 +287,7 @@ class BlockService {
             if (this.hasVisibleDestination(key)) {
                 layer++;
                 linkService.setLinkNumber(key, currentBlock.destination, linkCount)
-                this.setVisibleVerticalDepths(currentBlock.destination, layer + utilityDepth + utilityLength, ++linkCount);
+                this.setVisibleVerticalDepths(currentBlock.destination, layer + utilityDepth + utilityCount, ++linkCount);
             }
         }
     }

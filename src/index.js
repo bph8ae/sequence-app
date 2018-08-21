@@ -185,7 +185,7 @@ diagram.nodeTemplate =
         $(go.Shape, "Procedure", // use this kind of figure for the Shape
             {
                 width: 100,
-                height: 100,
+                height: 100
             },
             //Change color of building block based on type
             new go.Binding("fill", "builtByScenario", function(builtByScenario) {
@@ -257,8 +257,17 @@ diagram.nodeTemplate =
 //The Link Template describes how each Link should be displayed
 diagram.linkTemplate =
     $(go.Link, {
-            routing: go.Link.AvoidsNodes
+            routing: go.Link.AvoidsNodes,
+            corner: 5,
+            toSpot: go.Spot.TopSide
         },
+        new go.Binding("fromSpot", "type", function(type) {
+            if (type === "utility") {
+                return go.Spot.RightSide;
+            } else {
+                return go.Spot.BottomSide;
+            }
+        }),
         $(go.Shape, //Link
             {
                 fill: "black"
@@ -454,10 +463,10 @@ diagram.animationManager.isEnabled = false;
 //Renders the entire Diagram - Note that this function is called whenever a node is expanded or retracted
 export function renderDiagram(x, y) {
     diagram.model = new go.GraphLinksModel(blockService.getVisibleBlocks(), linkService.getVisibleLinks());
-    if(typeof x !== "undefined" && typeof y !== "undefined") {
+    if (typeof x !== "undefined" && typeof y !== "undefined") {
         setTimeout(() => {
-            const muhRect = new go.Rect(x, y, 1, 1);
-            diagram.scrollToRect(muhRect);
+            const myRect = new go.Rect(x, y, 1, 1);
+            diagram.scrollToRect(myRect);
         }, 50);
     }
 }

@@ -22,9 +22,6 @@ var fileBlocks = [];
 var jsonReadSuccessful = false;
 var excelReadSuccessful = false;
 
-console.log("lommy")
-console.log($);
-
 class FileService {
 
     constructor() {

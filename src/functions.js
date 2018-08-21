@@ -3,7 +3,6 @@ This class contains export functions with ability to manipulate nodes using + an
 */
 
 import * as go from 'gojs';
-import $ from 'jquery';
 import {
     blockService
 } from "./blockService";
@@ -17,9 +16,6 @@ import {
     renderDiagram as render
 } from "./index";
 
-var scrollBarYPosition = 0;
-
-
 //Expands node if not expanded yet and retracts node and already expanded
 export function toggleNode(e, obj) {
     if (typeof obj.part.data !== "undefined") {
@@ -30,19 +26,9 @@ export function toggleNode(e, obj) {
             retractNode(key);
         } else {
             var divChild = document.getElementById("myDiagramDiv").children[1];
-            scrollBarYPosition = divChild.scrollTop;
-            console.log(scrollBarYPosition);
             expandNode(key);
-            scrollToBlock(scrollBarYPosition);
         }
     }
-}
-
-//Uses jQuery to save and reset the Vertical Scroll Position
-function scrollToBlock(y) {
-    console.log("In functions.js scrollToBlock(y) setting ScrollTop to: "+y);
-    document.getElementById("myDiagramDiv").children[1].scrollTop = y;
-    console.log("After setting scrolltop "+document.getElementById("myDiagramDiv").children[1].scrollTop);
 }
 
 //Checks if node is expanded based on visible children and returns true if expanded
