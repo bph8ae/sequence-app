@@ -356,13 +356,13 @@ diagram.add(
         }),
         $(go.Shape, "TriangleRight", {
             position: new go.Point(16, 132),
-            fill: "gray",
+            fill: "black",
             stroke: "black",
             desiredSize: new go.Size(6, 6)
         }),
         $(go.Shape, "TriangleLeft", {
             position: new go.Point(-2, 132),
-            fill: "gray",
+            fill: "black",
             stroke: "black",
             desiredSize: new go.Size(6, 6)
         }),
@@ -390,7 +390,7 @@ diagram.add(
         }),
         $(go.Shape, "TriangleDown", {
             position: new go.Point(7, 170),
-            fill: "gray",
+            fill: "black",
             stroke: "black",
             desiredSize: new go.Size(6, 6)
         }),
